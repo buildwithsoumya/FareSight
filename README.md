@@ -10,7 +10,7 @@
 
 ---
 
-## 📌 Project Overview
+## Project Overview
 
 FareSight is an end-to-end flight-price intelligence system. It combines **exploratory data analysis (EDA)**, **machine-learning-based price prediction**, and a **FastAPI + React dashboard** to answer one practical question:
 
