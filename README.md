@@ -1,8 +1,8 @@
-<h1 align="center">✈️ FareSight — AI Travel Analyst</h1>
+<h1 align="center">FareSight - AI Travel Analyst</h1>
 
 <p align="center"><strong>Explore flight prices. Understand the factors. Predict smarter fares.</strong></p>
 
-<p align="center"><em>MIC AIML Department Recruitment Challenge · Data Science & Visualization — AI Travel Analyst Track</em></p>
+<p align="center"><em>MIC AIML Department Recruitment Challenge · Data Science & Visualization - AI Travel Analyst Track</em></p>
 
 ---
 
@@ -20,7 +20,7 @@ FareSight is an end-to-end flight-price intelligence system. It combines **explo
 
 The project is developed as part of the **MIC AIML Department Recruitment Challenge**, targeting the **Data Science & Visualization — AI Travel Analyst** track.
 
-## 🎯 Problem Statement
+## Problem Statement
 
 Flight prices are volatile, opaque, and influenced by many interacting factors — airline, route, number of stops, duration, departure time, season, and more. Travellers rarely know whether the fare they see is reasonable, and understanding *why* a price is high is even harder.
 
@@ -30,7 +30,7 @@ FareSight addresses this by:
 2. Building a regression model that estimates flight prices from flight characteristics.
 3. Exposing the model through a clean API and dashboard so insights and predictions are actually usable.
 
-## ✅ Objectives
+## Objectives
 
 - **Explore** — Preprocess the flight-price dataset and produce at least 5 meaningful visualizations.
 - **Understand** — Identify the major factors affecting flight prices and translate them into actionable insights.
@@ -38,7 +38,7 @@ FareSight addresses this by:
 - **Evaluate** — Report model performance transparently (MAE, RMSE, R²) and explain which features drive predictions.
 - **Deliver** — Package the analysis and model behind a FastAPI backend with a React dashboard.
 
-## 📋 Challenge Scope
+## Challenge Scope
 
 | Part | Focus | Status |
 | ---- | ----- | ------ |
@@ -48,7 +48,7 @@ FareSight addresses this by:
 
 Part 1 + Part 2 are the mandatory requirements for this track. Part 3 is an optional stretch goal and is **not** part of the current scope.
 
-## ✨ Key Features
+## Key Features
 
 | Feature | Description | Status |
 | ------- | ----------- | ------ |
@@ -61,23 +61,23 @@ Part 1 + Part 2 are the mandatory requirements for this track. Part 3 is an opti
 | FastAPI backend | REST API serving overview, analysis, and prediction endpoints | **Planned** |
 | React dashboard | Interactive overview, charts, insights, and prediction UI | **Planned** |
 
-## 🏗️ System Architecture
+## System Architecture
 
 FareSight is designed as a **hub-and-spoke system**: every component feeds into or reads from the core application, while the data still flows naturally from dataset → processing → model → API → dashboard.
 
 ```mermaid
 flowchart TD
-    FS["✈️ FareSight<br/>AI Travel Analyst"]
-    DS["📊 Flight Dataset"]
-    DP["🧹 Data Processing"]
-    EDA["🔍 Exploratory<br/>Data Analysis"]
-    FE["⚙️ Feature<br/>Engineering"]
-    ML["🧠 ML Model"]
-    EVAL["📈 Evaluation"]
-    API["⚡ FastAPI Backend"]
-    UI["🖥️ React Dashboard"]
-    PRED["🎯 Prediction"]
-    INS["💡 Insights"]
+    FS["FareSight<br/>AI Travel Analyst"]
+    DS["Flight Dataset"]
+    DP["Data Processing"]
+    EDA["Exploratory<br/>Data Analysis"]
+    FE["Feature<br/>Engineering"]
+    ML["ML Model"]
+    EVAL["Evaluation"]
+    API["FastAPI Backend"]
+    UI["React Dashboard"]
+    PRED["Prediction"]
+    INS["Insights"]
 
     FS --- DS
     FS --- DP
@@ -107,26 +107,26 @@ flowchart TD
 
 > **Note:** The dashed nodes represent the *target* architecture. No component has been implemented in the repository yet.
 
-## 🔄 Project Workflow
+## Project Workflow
 
 The intended end-to-end pipeline:
 
 ```mermaid
 flowchart LR
-    A["📥 Dataset"] --> B["🧹 Data Cleaning"]
-    B --> C["🔍 EDA"]
-    C --> D["⚙️ Feature Engineering"]
-    D --> E["✂️ Train / Test Split"]
-    E --> F["🧠 Model Training"]
-    F --> G["📈 Model Evaluation"]
-    G --> H["💾 Model Persistence"]
-    H --> I["⚡ FastAPI"]
-    I --> J["🖥️ React Dashboard"]
+    A["Dataset"] --> B["Data Cleaning"]
+    B --> C["EDA"]
+    C --> D["Feature Engineering"]
+    D --> E["Train / Test Split"]
+    E --> F["Model Training"]
+    F --> G["Model Evaluation"]
+    G --> H["Model Persistence"]
+    H --> I["FastAPI"]
+    I --> J["React Dashboard"]
 ```
 
 **Current status:** the pipeline is at the very first stage — the repository scaffold is in place and the dataset pipeline has not been built yet.
 
-## 🧰 Technology Stack
+## Tech Stack
 
 > All technologies below are part of the **planned** stack. They will be listed as implemented only once the corresponding code exists in the repository.
 
@@ -143,7 +143,7 @@ flowchart LR
 | Data Science | Matplotlib, Seaborn | Visualizations |
 | Data Science | Joblib | Model persistence |
 
-## 📁 Project Structure
+## Project Structure
 
 The target repository layout (to be created in upcoming milestones):
 
@@ -168,9 +168,9 @@ FareSight/
 └── README.md
 ```
 
-## 🔬 Data Science Pipeline
+## Data Science Pipeline
 
-### 🧹 Data Cleaning
+### Data Cleaning
 
 The planned cleaning stage will cover:
 
@@ -184,7 +184,7 @@ The planned cleaning stage will cover:
 
 These operations will be implemented and documented as the notebooks are added.
 
-### 📊 Exploratory Data Analysis
+### Exploratory Data Analysis
 
 The planned EDA includes the analyses required by the challenge (≥5 meaningful visualizations):
 
@@ -198,7 +198,7 @@ The planned EDA includes the analyses required by the challenge (≥5 meaningful
 
 Visualizations will be generated with Matplotlib and Seaborn and exported from the notebooks. Findings and recommendations will be added here once the analysis is complete.
 
-### ⚙️ Feature Engineering
+### Feature Engineering
 
 Planned features include:
 
@@ -207,7 +207,7 @@ Planned features include:
 - Time-based features (departure hour, month, weekday, season).
 - Any engineered interaction features that the EDA suggests are relevant.
 
-## 🤖 Machine Learning
+## Machine Learning
 
 FareSight approaches flight-price prediction as a **supervised regression problem**: given flight characteristics, predict the price.
 
@@ -229,7 +229,7 @@ Models will be evaluated on a held-out test split using:
 
 > **Status:** no model has been trained yet, and no performance numbers exist in the repository. Metrics will be reported here after training and evaluation.
 
-## ⚡ Backend Architecture
+## Backend Architecture
 
 ### Planned Request Flow
 
@@ -252,7 +252,7 @@ flowchart TD
 
 > **Status:** the backend does not exist yet; these endpoints are part of the planned design.
 
-## 🖥️ Frontend Dashboard
+## Frontend Dashboard
 
 ### Planned Sections
 
@@ -264,7 +264,7 @@ flowchart TD
 
 > **Status:** the frontend does not exist yet; these sections are part of the planned design.
 
-## 🛠️ Installation
+## Installation
 
 The repository is currently scaffold-only, so there is no runnable application code to install yet. The following commands describe the **planned** setup and will apply once the `backend/` and `frontend/` directories are added.
 
@@ -294,7 +294,7 @@ npm install
 npm run dev
 ```
 
-## 🚀 Usage
+## Usage
 
 Once implemented, the intended usage flow is:
 
@@ -304,7 +304,7 @@ Once implemented, the intended usage flow is:
 
 Detailed run instructions will be added as the components are built.
 
-## 📡 API Overview
+## API Overview
 
 The planned API contract is summarized below and will be documented in full once the backend is implemented.
 
@@ -316,7 +316,7 @@ The planned API contract is summarized below and will be documented in full once
 
 > **Status:** all endpoints are **planned** — none are live yet.
 
-## 📈 Results
+## Results
 
 > Results will be updated after the data preprocessing, model training, and evaluation stages are completed.
 
@@ -328,7 +328,7 @@ The planned API contract is summarized below and will be documented in full once
 
 No performance numbers are reported yet because no model has been trained.
 
-## 🧗 Challenges
+## Challenges
 
 - **Data quality** — real-world flight-price data often contains missing values, inconsistent categories, and outliers that require careful handling.
 - **Price volatility** — flight prices depend on booking timing and demand, which are hard to capture fully in a static dataset.
@@ -336,7 +336,7 @@ No performance numbers are reported yet because no model has been trained.
 - **Model generalization** — a simple baseline may underfit; the ensemble approach should balance interpretability with performance.
 - **Integration** — wiring the trained model, FastAPI, and React dashboard into one smooth flow requires careful contract design (request/response schemas).
 
-## 🔭 Future Improvements
+## Future Improvements
 
 - **Part 3 stretch goals** (optional):
   - Cheapest booking-time analysis.
@@ -347,22 +347,4 @@ No performance numbers are reported yet because no model has been trained.
 - Deployment of the backend and dashboard to a public URL.
 - Screenshots and a short demo walkthrough in this README.
 
-## 🎓 Recruitment Challenge Context
 
-This project is submitted for the **MIC AIML Department Recruitment Challenge — Data Science & Visualization (AI Travel Analyst) track**.
-
-- **Part 1 (Exploration):** cleaning + ≥5 visualizations + price-factor analysis + recommendations — **planned**.
-- **Part 2 (Modeling):** feature engineering, training, evaluation, and feature explanation — **planned**.
-- **Part 3 (Stretch):** explicitly out of scope for now.
-
-The repository is being developed to demonstrate understanding and engineering decisions — how the data flows, why the modeling approach makes sense, and how the frontend and backend communicate — which maps directly to the challenge's evaluation criteria (understanding, technical implementation, creativity, code quality, and documentation).
-
-## 👤 Author
-
-**Soumya** — 2nd-year CSE student.
-
-- GitHub: [buildwithsoumya](https://github.com/buildwithsoumya)
-
-## 📄 License
-
-No license file has been added yet — to be decided.
