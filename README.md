@@ -2,8 +2,6 @@
 
 <p align="center"><strong>Explore flight prices. Understand the factors. Predict smarter fares.</strong></p>
 
-<p align="center"><em>MIC AIML Department Recruitment Challenge · Data Science & Visualization - AI Travel Analyst Track</em></p>
-
 ---
 
 > 🚧 **Status: In Development**
@@ -18,11 +16,10 @@ FareSight is an end-to-end flight-price intelligence system. It combines **explo
 
 > **What drives flight prices, and can we predict them before booking?**
 
-The project is developed as part of the **MIC AIML Department Recruitment Challenge**, targeting the **Data Science & Visualization — AI Travel Analyst** track.
 
 ## Problem Statement
 
-Flight prices are volatile, opaque, and influenced by many interacting factors — airline, route, number of stops, duration, departure time, season, and more. Travellers rarely know whether the fare they see is reasonable, and understanding *why* a price is high is even harder.
+Flight prices are volatile, opaque, and influenced by many interacting factors - airline, route, number of stops, duration, departure time, season, and more. Travellers rarely know whether the fare they see is reasonable, and understanding *why* a price is high is even harder.
 
 FareSight addresses this by:
 
@@ -32,21 +29,20 @@ FareSight addresses this by:
 
 ## Objectives
 
-- **Explore** — Preprocess the flight-price dataset and produce at least 5 meaningful visualizations.
-- **Understand** — Identify the major factors affecting flight prices and translate them into actionable insights.
-- **Model** — Engineer features and train a regression model to predict flight prices.
-- **Evaluate** — Report model performance transparently (MAE, RMSE, R²) and explain which features drive predictions.
-- **Deliver** — Package the analysis and model behind a FastAPI backend with a React dashboard.
+- **Explore** - Preprocess the flight-price dataset and produce at least 5 meaningful visualizations.
+- **Understand** - Identify the major factors affecting flight prices and translate them into actionable insights.
+- **Model** - Engineer features and train a regression model to predict flight prices.
+- **Evaluate** - Report model performance transparently (MAE, RMSE, R²) and explain which features drive predictions.
+- **Deliver** - Package the analysis and model behind a FastAPI backend with a React dashboard.
 
 ## Challenge Scope
 
 | Part | Focus | Status |
 | ---- | ----- | ------ |
-| Part 1 | Exploration — cleaning, ≥5 visualizations, price-factor analysis, insights | **Planned** |
-| Part 2 | Modeling — feature engineering, training, evaluation, feature explanation | **Planned** |
-| Part 3 | Optional stretch — cheapest booking time, price forecasting, recommendation system | **Not started** |
+| Part 1 | Exploration - cleaning, ≥5 visualizations, price-factor analysis, insights | **Planned** |
+| Part 2 | Modeling - feature engineering, training, evaluation, feature explanation | **Planned** |
+| Part 3 | Optional stretch - cheapest booking time, price forecasting, recommendation system | **Not started** |
 
-Part 1 + Part 2 are the mandatory requirements for this track. Part 3 is an optional stretch goal and is **not** part of the current scope.
 
 ## Key Features
 
@@ -99,8 +95,8 @@ flowchart TD
     UI --> PRED
     UI --> INS
 
-    classDef core fill:#0f3a5f,color:#fff,stroke:#0f3a5f,stroke-width:2px;
-    classDef planned fill:#eef4fb,stroke:#7aa5cf,stroke-dasharray:4 3;
+    classDef core fill:#2a6a96,color:#ffffff,stroke:#1e4f72,stroke-width:2px;
+    classDef planned fill:#4d8cbb,color:#ffffff,stroke:#2a6a96,stroke-dasharray:4 3;
     class FS core;
     class DS,DP,EDA,FE,ML,EVAL,API,UI,PRED,INS planned;
 ```
@@ -122,6 +118,9 @@ flowchart LR
     G --> H["Model Persistence"]
     H --> I["FastAPI"]
     I --> J["React Dashboard"]
+
+    classDef step fill:#4d8cbb,color:#ffffff,stroke:#2a6a96,stroke-width:2px;
+    class A,B,C,D,E,F,G,H,I,J step;
 ```
 
 **Current status:** the pipeline is at the very first stage — the repository scaffold is in place and the dataset pipeline has not been built yet.
@@ -240,6 +239,9 @@ flowchart TD
     PP --> MODEL["Trained ML Model"]
     MODEL --> RESP["JSON Response"]
     RESP --> UI
+
+    classDef flow fill:#4d8cbb,color:#ffffff,stroke:#2a6a96,stroke-width:2px;
+    class UI,API,PP,MODEL,RESP flow;
 ```
 
 ### Planned API Endpoints
