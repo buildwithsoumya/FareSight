@@ -23,7 +23,7 @@ interface BarChartWrapperProps {
 
 export default function BarChartWrapper({
   data,
-  dataKey = 'averagePrice',
+  dataKey = 'average_price',
   color = '#3d88c1',
   height = 260,
   horizontal = false,

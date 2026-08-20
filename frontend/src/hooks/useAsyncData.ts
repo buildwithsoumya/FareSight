@@ -6,6 +6,10 @@ interface AsyncState<T> {
   error: string | null
 }
 
+/**
+ * Load data from an async fetcher, tracking loading/error state.
+ * `deps` re-triggers the fetch when they change (default: on mount).
+ */
 export function useAsyncData<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
   const [state, setState] = useState<AsyncState<T>>({
     data: null,
@@ -21,11 +25,11 @@ export function useAsyncData<T>(fetcher: () => Promise<T>, deps: unknown[] = [])
       const data = await fetcherRef.current()
       setState({ data, loading: false, error: null })
     } catch (err) {
-      setState({
-        data: null,
-        loading: false,
-        error: err instanceof Error ? err.message : 'Something went wrong.',
-      })
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Something went wrong while fetching data.'
+      setState({ data: null, loading: false, error: message })
     }
   }, [])
 

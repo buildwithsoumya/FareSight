@@ -1,3 +1,5 @@
+import { useApiHealth } from '../../hooks/useApiHealth'
+
 interface HeaderProps {
   title: string
   subtitle?: string
@@ -5,6 +7,8 @@ interface HeaderProps {
 }
 
 export default function Header({ title, subtitle, onMenuClick }: HeaderProps) {
+  const apiOnline = useApiHealth()
+
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6 lg:px-8">
       <button
@@ -29,15 +33,40 @@ export default function Header({ title, subtitle, onMenuClick }: HeaderProps) {
         )}
       </div>
 
-      <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">
+      <div
+        className={`flex items-center gap-2 rounded-full border px-3 py-1.5 ${
+          apiOnline === null
+            ? 'border-slate-200 bg-slate-50'
+            : apiOnline
+              ? 'border-emerald-200 bg-emerald-50'
+              : 'border-rose-200 bg-rose-50'
+        }`}
+        role="status"
+        aria-live="polite"
+        aria-label={apiOnline === null ? 'Checking API status' : apiOnline ? 'API online' : 'API offline'}
+      >
         <span className="relative flex h-2 w-2" aria-hidden="true">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+          {apiOnline === null ? (
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-slate-400" />
+          ) : apiOnline ? (
+            <>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+            </>
+          ) : (
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-rose-500" />
+          )}
         </span>
-        <span className="hidden text-xs font-medium text-slate-600 sm:inline">
-          Mock data mode
+        <span className="hidden text-xs font-medium text-slate-700 sm:inline">
+          {apiOnline === null
+            ? 'Checking API…'
+            : apiOnline
+              ? 'API Online'
+              : 'API Offline'}
         </span>
-        <span className="text-xs font-medium text-slate-600 sm:hidden">Mock</span>
+        <span className="text-xs font-medium text-slate-700 sm:hidden">
+          {apiOnline === null ? '…' : apiOnline ? 'Online' : 'Offline'}
+        </span>
       </div>
     </header>
   )

@@ -3,143 +3,129 @@
 // -----------------------------------------------------------------------------
 // Central Axios configuration for the FareSight FastAPI backend.
 //
-// Integration status:
-//   GET  /api/overview  — endpoint does NOT exist on the backend yet
-//   GET  /api/analysis  — endpoint does NOT exist on the backend yet
-//   POST /api/predict   — endpoint does NOT exist on the backend yet
-//
-// The service functions below define the expected response shapes and attempt
-// a live call, falling back to bundled mock data when the backend is
-// unreachable (or when the endpoint is not implemented). Once the FastAPI
-// routes are live, these functions work unchanged.
+// Live endpoints:
+//   GET  /                          — welcome message
+//   GET  /api/health                — health check
+//   POST /api/predict               — fare prediction
+//   GET  /api/analytics/summary     — dataset summary
+//   GET  /api/analytics/airlines    — avg fare by airline
+//   GET  /api/analytics/classes     — avg fare by travel class
+//   GET  /api/analytics/stops       — avg fare by stops
+//   GET  /api/analytics/seasons     — avg fare by season
+//   GET  /api/analytics/sources     — avg fare by source
+//   GET  /api/analytics/destinations
+//   GET  /api/analytics/booking-channels
+//   GET  /api/analytics/duration    — fare vs duration scatter
+//   GET  /api/analytics/days-before-departure
+//   GET  /api/analytics/feature-importance
 //
 // To point at a deployed backend, set VITE_API_BASE_URL (see .env.example).
 // -----------------------------------------------------------------------------
 
 import axios from 'axios'
 import type {
-  AnalyticsData,
-  AnalyticsFilters,
-  DashboardData,
-  InsightsData,
+  CategoryPricePoint,
+  FeatureImportanceItem,
+  HealthResponse,
   PredictionRequest,
   PredictionResponse,
+  ScatterResponse,
+  SummaryData,
 } from '../types'
-import {
-  analyticsData as mockAnalytics,
-  dashboardData as mockDashboard,
-  insightsData as mockInsights,
-  mockPredict,
-} from '../data/mockData'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 8000,
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-// True when the app is using bundled mock data instead of live endpoints.
-export const isMockMode = true
-
 // -----------------------------------------------------------------------------
-// Dashboard
+// HEALTH
 // -----------------------------------------------------------------------------
 
-export async function getOverview(): Promise<DashboardData> {
-  try {
-    const { data } = await apiClient.get<DashboardData>('/api/overview')
-    return data
-  } catch {
-    // TODO: connect GET /api/overview when the FastAPI endpoint is live.
-    return mockDashboard
-  }
+export async function checkHealth(): Promise<HealthResponse> {
+  const { data } = await apiClient.get<HealthResponse>('/api/health')
+  return data
 }
 
 // -----------------------------------------------------------------------------
-// Analytics
+// PREDICTION
 // -----------------------------------------------------------------------------
 
-// Filtered analytics. The backend will accept filters as query parameters;
-// the mock layer applies a light client-side filter to stay honest.
-export async function getAnalytics(
-  filters: AnalyticsFilters,
-): Promise<AnalyticsData> {
-  try {
-    const { data } = await apiClient.get<AnalyticsData>('/api/analytics', {
-      params: filters,
-    })
-    return data
-  } catch {
-    // TODO: connect GET /api/analytics when the FastAPI endpoint is live.
-    return applyMockAnalyticsFilters(mockAnalytics, filters)
-  }
-}
-
-// -----------------------------------------------------------------------------
-// Prediction
-// -----------------------------------------------------------------------------
-
-export async function predictPrice(
+export async function predictFare(
   payload: PredictionRequest,
 ): Promise<PredictionResponse> {
-  try {
-    const { data } = await apiClient.post<PredictionResponse>('/api/predict', payload)
-    return data
-  } catch {
-    // TODO: connect POST /api/predict when the FastAPI endpoint is live.
-    // Clearly a mock fallback — the UI labels results from this path as such.
-    return mockPredict(payload)
-  }
+  const { data } = await apiClient.post<PredictionResponse>('/api/predict', payload)
+  return data
 }
 
 // -----------------------------------------------------------------------------
-// Insights
+// ANALYTICS
 // -----------------------------------------------------------------------------
 
-export async function getInsights(): Promise<InsightsData> {
-  try {
-    const { data } = await apiClient.get<InsightsData>('/api/insights')
-    return data
-  } catch {
-    // TODO: connect GET /api/insights when the FastAPI endpoint is live.
-    return mockInsights
-  }
+export async function getSummary(): Promise<SummaryData> {
+  const { data } = await apiClient.get<SummaryData>('/api/analytics/summary')
+  return data
 }
 
-// -----------------------------------------------------------------------------
-// Mock filter helper (removed once the backend serves filtered aggregates)
-// -----------------------------------------------------------------------------
-
-function applyMockAnalyticsFilters(
-  data: AnalyticsData,
-  filters: AnalyticsFilters,
-): AnalyticsData {
-  const active = Object.entries(filters).filter(([, value]) => value !== 'all')
-  if (active.length === 0) return data
-
-  // Charts that have a matching dimension get filtered;
-  // scatter relationships are dataset-wide and stay intact.
-  return {
-    ...data,
-    priceBySource: filterByName(data.priceBySource, filters.source, filters.airline),
-    priceByDestination: filterByName(data.priceByDestination, filters.destination),
-    priceByBookingChannel: filterByName(
-      data.priceByBookingChannel,
-      filters.bookingChannel,
-    ),
-    priceBySeason: filterByName(data.priceBySeason, filters.season),
-  }
+export async function getAirlineAnalytics(): Promise<CategoryPricePoint[]> {
+  const { data } = await apiClient.get<CategoryPricePoint[]>('/api/analytics/airlines')
+  return data
 }
 
-function filterByName(
-  items: { name: string; averagePrice: number }[],
-  ...allowed: string[]
-) {
-  const allowedValues = allowed.filter((v) => v && v !== 'all')
-  if (allowedValues.length === 0) return items
-  return items.filter((item) => allowedValues.includes(item.name))
+export async function getClassAnalytics(): Promise<CategoryPricePoint[]> {
+  const { data } = await apiClient.get<CategoryPricePoint[]>('/api/analytics/classes')
+  return data
+}
+
+export async function getStopsAnalytics(): Promise<CategoryPricePoint[]> {
+  const { data } = await apiClient.get<CategoryPricePoint[]>('/api/analytics/stops')
+  return data
+}
+
+export async function getSeasonAnalytics(): Promise<CategoryPricePoint[]> {
+  const { data } = await apiClient.get<CategoryPricePoint[]>('/api/analytics/seasons')
+  return data
+}
+
+export async function getSourceAnalytics(): Promise<CategoryPricePoint[]> {
+  const { data } = await apiClient.get<CategoryPricePoint[]>('/api/analytics/sources')
+  return data
+}
+
+export async function getDestinationAnalytics(): Promise<CategoryPricePoint[]> {
+  const { data } = await apiClient.get<CategoryPricePoint[]>(
+    '/api/analytics/destinations',
+  )
+  return data
+}
+
+export async function getBookingChannelAnalytics(): Promise<CategoryPricePoint[]> {
+  const { data } = await apiClient.get<CategoryPricePoint[]>(
+    '/api/analytics/booking-channels',
+  )
+  return data
+}
+
+export async function getDurationAnalytics(): Promise<ScatterResponse> {
+  const { data } = await apiClient.get<ScatterResponse>('/api/analytics/duration')
+  return data
+}
+
+export async function getDaysBeforeDepartureAnalytics(): Promise<ScatterResponse> {
+  const { data } = await apiClient.get<ScatterResponse>(
+    '/api/analytics/days-before-departure',
+  )
+  return data
+}
+
+export async function getFeatureImportance(): Promise<FeatureImportanceItem[]> {
+  const { data } = await apiClient.get<FeatureImportanceItem[]>(
+    '/api/analytics/feature-importance',
+  )
+  return data
 }

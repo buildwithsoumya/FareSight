@@ -1,58 +1,72 @@
 // Shared domain types for FareSight.
-// These mirror the shapes the FastAPI backend will expose
-// (see frontend/src/services/api.ts for the integration plan).
+// These mirror the shapes the FastAPI backend exposes.
 
-export interface KpiSummary {
-  averagePrice: number
-  minPrice: number
-  maxPrice: number
-  flightsAnalyzed: number
-  medianPrice: number
-}
+// ---------------------------------------------------------------------------
+// PREDICTION
+// ---------------------------------------------------------------------------
 
-export interface PriceDistributionPoint {
-  lowerBound: number
-  upperBound: number
-  count: number
-}
-
-export interface CategoryPricePoint {
-  name: string
-  averagePrice: number
-  flightCount?: number
-}
-
-export interface ScatterPoint {
-  x: number
-  y: number
-}
-
-export interface AnalyticsFilters {
+export interface PredictionRequest {
   airline: string
   source: string
   destination: string
-  travelClass: string
-  totalStops: string
-  bookingChannel: string
+  departure_date: string // YYYY-MM-DD
+  departure_time: string // e.g. "10:30 AM" or "07:05"
+  arrival_time: string // e.g. "12:45 PM" or "12:55"
+  duration: string // e.g. "2h 15m", "177 min", or decimal hours
+  total_stops: number
+  distance_km: number
+  travel_class: string
+  days_before_departure: number
   season: string
+  weekday: string
+  aircraft_type: string
+  booking_channel: string
+  passenger_count: number
 }
 
-export interface AnalyticsData {
-  priceVsDuration: ScatterPoint[]
-  priceVsDistance: ScatterPoint[]
-  priceVsDaysBeforeDeparture: ScatterPoint[]
-  priceBySource: CategoryPricePoint[]
-  priceByDestination: CategoryPricePoint[]
-  priceByBookingChannel: CategoryPricePoint[]
-  priceBySeason: CategoryPricePoint[]
+export interface PredictionResponse {
+  predicted_price: number
+  currency: string
 }
 
-export interface DashboardData {
-  kpis: KpiSummary
-  priceDistribution: PriceDistributionPoint[]
-  priceByAirline: CategoryPricePoint[]
-  priceByTravelClass: CategoryPricePoint[]
-  priceByStops: CategoryPricePoint[]
+// ---------------------------------------------------------------------------
+// HEALTH
+// ---------------------------------------------------------------------------
+
+export interface HealthResponse {
+  status: string
+  service: string
+}
+
+// ---------------------------------------------------------------------------
+// ANALYTICS
+// ---------------------------------------------------------------------------
+
+export interface CategoryPricePoint {
+  name: string
+  average_price: number
+}
+
+export interface SummaryData {
+  dataset: string
+  rows: number
+  valid_prices: number
+  average_price: number
+  median_price: number
+  min_price: number
+  max_price: number
+  airlines: number
+  sources: number
+  destinations: number
+}
+
+export interface ScatterResponse {
+  points: {
+    duration_minutes?: number
+    days_before_departure?: number
+    price: number
+  }[]
+  correlation: number
 }
 
 export interface FeatureImportanceItem {
@@ -60,57 +74,9 @@ export interface FeatureImportanceItem {
   importance: number
 }
 
-export interface ModelMetrics {
-  name: string
-  mae: number
-  rmse: number
-  r2: number
-}
-
-export interface InsightItem {
-  title: string
-  summary: string
-  detail: string
-  category: string
-}
-
-export interface InsightsData {
-  insights: InsightItem[]
-  featureImportance: FeatureImportanceItem[]
-  modelMetrics: ModelMetrics[]
-}
-
-export interface PredictionRequest {
-  airline: string
-  source: string
-  destination: string
-  travelClass: string
-  totalStops: number
-  distanceKm: number
-  daysBeforeDeparture: number
-  passengerCount: number
-  season: string
-  weekday: string
-  aircraftType: string
-  bookingChannel: string
-  departureHour: number
-  arrivalHour: number
-  durationMinutes: number
-}
-
-export interface PredictionResponse {
-  predictedPrice: number
-  currency: string
-  source: 'api' | 'mock'
-  model?: string
-}
-
-export interface DatasetMetadata {
-  datasetName: string
-  description: string
-  rows: number
-  features: number
-  target: string
+export interface ScatterPoint {
+  x: number
+  y: number
 }
 
 // ---------------------------------------------------------------------------

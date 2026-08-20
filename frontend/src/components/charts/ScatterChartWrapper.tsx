@@ -10,8 +10,11 @@ import {
 import type { ScatterPoint } from '../../types'
 import { formatCompactINR, formatNumber } from '../../utils/format'
 
+// Local shape so the wrapper stays decoupled from the analytics API.
+type Point = ScatterPoint
+
 interface ScatterChartWrapperProps {
-  data: ScatterPoint[]
+  data: Point[]
   xLabel: string
   yLabel?: string
   xFormatter?: (value: number) => string

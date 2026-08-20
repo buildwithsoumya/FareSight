@@ -1,10 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { predictPrice } from '../services/api'
-import type {
-  PredictionRequest,
-  PredictionResponse,
-} from '../types'
+import { predictFare } from '../services/api'
+import type { PredictionRequest, PredictionResponse } from '../types'
 import {
   AIRLINES,
   AIRCRAFT_TYPES,
@@ -17,42 +14,47 @@ import {
 } from '../types'
 import SelectField from '../components/forms/SelectField'
 import NumberInput from '../components/forms/NumberInput'
+import TextInput from '../components/forms/TextInput'
+import DateInput from '../components/forms/DateInput'
+import TimeInput from '../components/forms/TimeInput'
 import PredictionResult from '../components/cards/PredictionResult'
 
 interface FormState {
   airline: string
   source: string
   destination: string
-  travelClass: string
-  totalStops: string
-  distanceKm: string
-  daysBeforeDeparture: string
-  passengerCount: string
+  departure_date: string
+  departure_time: string
+  arrival_time: string
+  duration: string
+  total_stops: string
+  distance_km: string
+  travel_class: string
+  days_before_departure: string
   season: string
   weekday: string
-  aircraftType: string
-  bookingChannel: string
-  departureHour: string
-  arrivalHour: string
-  durationMinutes: string
+  aircraft_type: string
+  booking_channel: string
+  passenger_count: string
 }
 
 const INITIAL_STATE: FormState = {
   airline: 'Indigo',
   source: 'Delhi',
   destination: 'Mumbai',
-  travelClass: 'Economy',
-  totalStops: '0',
-  distanceKm: '1147',
-  daysBeforeDeparture: '30',
-  passengerCount: '1',
-  season: 'Summer',
-  weekday: 'Monday',
-  aircraftType: 'Airbus A320',
-  bookingChannel: 'Mobile App',
-  departureHour: '10',
-  arrivalHour: '12',
-  durationMinutes: '150',
+  departure_date: '2026-09-15',
+  departure_time: '10:30 AM',
+  arrival_time: '12:45 PM',
+  duration: '2h 15m',
+  total_stops: '0',
+  distance_km: '1150',
+  travel_class: 'Economy',
+  days_before_departure: '30',
+  season: 'Monsoon',
+  weekday: 'Tuesday',
+  aircraft_type: 'Airbus A320',
+  booking_channel: 'Website',
+  passenger_count: '1',
 }
 
 function toOptions(values: readonly string[]) {
@@ -64,39 +66,53 @@ function buildRequest(form: FormState): PredictionRequest {
     airline: form.airline,
     source: form.source,
     destination: form.destination,
-    travelClass: form.travelClass,
-    totalStops: Number(form.totalStops),
-    distanceKm: Number(form.distanceKm),
-    daysBeforeDeparture: Number(form.daysBeforeDeparture),
-    passengerCount: Number(form.passengerCount),
+    departure_date: form.departure_date,
+    departure_time: form.departure_time,
+    arrival_time: form.arrival_time,
+    duration: form.duration,
+    total_stops: Number(form.total_stops),
+    distance_km: Number(form.distance_km),
+    travel_class: form.travel_class,
+    days_before_departure: Number(form.days_before_departure),
     season: form.season,
     weekday: form.weekday,
-    aircraftType: form.aircraftType,
-    bookingChannel: form.bookingChannel,
-    departureHour: Number(form.departureHour),
-    arrivalHour: Number(form.arrivalHour),
-    durationMinutes: Number(form.durationMinutes),
+    aircraft_type: form.aircraft_type,
+    booking_channel: form.booking_channel,
+    passenger_count: Number(form.passenger_count),
   }
 }
 
 function validate(form: FormState): string | null {
-  if (form.source === form.destination) {
+  if (!form.airline || !form.source || !form.destination) {
+    return 'Airline, source and destination are required.'
+  }
+  if (form.source.trim().toLowerCase() === form.destination.trim().toLowerCase()) {
     return 'Source and destination must be different cities.'
   }
-  if (Number(form.distanceKm) <= 0) {
+  if (!form.departure_date) {
+    return 'Departure date is required.'
+  }
+  if (!form.departure_time || !form.arrival_time) {
+    return 'Departure and arrival times are required.'
+  }
+  if (!form.duration.trim()) {
+    return 'Duration is required (e.g. "2h 15m" or "177 min").'
+  }
+  const stops = Number(form.total_stops)
+  if (Number.isNaN(stops) || stops < 0 || stops > 10) {
+    return 'Total stops must be between 0 and 10.'
+  }
+  const distance = Number(form.distance_km)
+  if (Number.isNaN(distance) || distance <= 0) {
     return 'Distance must be greater than 0 km.'
   }
-  if (Number(form.durationMinutes) <= 0) {
-    return 'Duration must be greater than 0 minutes.'
-  }
-  if (Number(form.daysBeforeDeparture) < 0) {
+  const days = Number(form.days_before_departure)
+  if (Number.isNaN(days) || days < 0) {
     return 'Days before departure cannot be negative.'
   }
-  if (
-    Number(form.passengerCount) < 1 ||
-    Number(form.passengerCount) > 6
-  ) {
-    return 'Passenger count must be between 1 and 6.'
+  const passengers = Number(form.passenger_count)
+  if (Number.isNaN(passengers) || passengers < 1 || passengers > 9) {
+    return 'Passenger count must be between 1 and 9.'
   }
   return null
 }
@@ -123,10 +139,14 @@ export default function Prediction() {
     setLoading(true)
     setError(null)
     try {
-      const response = await predictPrice(buildRequest(form))
+      const response = await predictFare(buildRequest(form))
       setResult(response)
-    } catch {
-      setError('Unable to generate a prediction. Please try again.')
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Unable to generate a prediction.'
+      setError(
+        `Prediction failed: ${message}. Please check the flight details and try again.`,
+      )
     } finally {
       setLoading(false)
     }
@@ -142,7 +162,8 @@ export default function Prediction() {
               Flight details
             </h2>
             <p className="mt-0.5 text-sm text-slate-500">
-              Inputs mirror the FareSight ML feature space.
+              Raw flight characteristics — engineered features are derived by
+              the backend.
             </p>
           </div>
 
@@ -157,8 +178,8 @@ export default function Prediction() {
             <SelectField
               id="pred-class"
               label="Travel Class"
-              value={form.travelClass}
-              onChange={(v) => update('travelClass', v)}
+              value={form.travel_class}
+              onChange={(v) => update('travel_class', v)}
               options={toOptions(TRAVEL_CLASSES)}
             />
             <SelectField
@@ -178,8 +199,8 @@ export default function Prediction() {
             <SelectField
               id="pred-stops"
               label="Total Stops"
-              value={form.totalStops}
-              onChange={(v) => update('totalStops', v)}
+              value={form.total_stops}
+              onChange={(v) => update('total_stops', v)}
               options={STOP_OPTIONS.map((s) => ({
                 value: s.value,
                 label: s.label,
@@ -188,15 +209,15 @@ export default function Prediction() {
             <SelectField
               id="pred-aircraft"
               label="Aircraft Type"
-              value={form.aircraftType}
-              onChange={(v) => update('aircraftType', v)}
+              value={form.aircraft_type}
+              onChange={(v) => update('aircraft_type', v)}
               options={toOptions(AIRCRAFT_TYPES)}
             />
             <SelectField
               id="pred-channel"
               label="Booking Channel"
-              value={form.bookingChannel}
-              onChange={(v) => update('bookingChannel', v)}
+              value={form.booking_channel}
+              onChange={(v) => update('booking_channel', v)}
               options={toOptions(BOOKING_CHANNELS)}
             />
             <SelectField
@@ -214,64 +235,65 @@ export default function Prediction() {
               options={toOptions(WEEKDAYS)}
             />
 
+            <DateInput
+              id="pred-date"
+              label="Departure Date"
+              value={form.departure_date}
+              onChange={(v) => update('departure_date', v)}
+              required
+            />
+            <TextInput
+              id="pred-duration"
+              label="Duration"
+              value={form.duration}
+              onChange={(v) => update('duration', v)}
+              required
+              placeholder="e.g. 2h 15m"
+              hint='Formats: "2h 15m", "177 min", or decimal hours'
+            />
+            <TimeInput
+              id="pred-departure-time"
+              label="Departure Time"
+              value={form.departure_time}
+              onChange={(v) => update('departure_time', v)}
+              required
+            />
+            <TimeInput
+              id="pred-arrival-time"
+              label="Arrival Time"
+              value={form.arrival_time}
+              onChange={(v) => update('arrival_time', v)}
+              required
+            />
+
             <NumberInput
               id="pred-distance"
               label="Distance"
-              value={form.distanceKm}
-              onChange={(v) => update('distanceKm', String(v))}
-              min={50}
-              max={20000}
+              value={form.distance_km}
+              onChange={(v) => update('distance_km', String(v))}
+              min={1}
+              max={25000}
               required
               suffix="km"
             />
             <NumberInput
-              id="pred-duration"
-              label="Duration"
-              value={form.durationMinutes}
-              onChange={(v) => update('durationMinutes', String(v))}
-              min={30}
-              max={1800}
-              required
-              suffix="min"
-            />
-            <NumberInput
               id="pred-days"
               label="Days Before Departure"
-              value={form.daysBeforeDeparture}
-              onChange={(v) => update('daysBeforeDeparture', String(v))}
+              value={form.days_before_departure}
+              onChange={(v) => update('days_before_departure', String(v))}
               min={0}
-              max={120}
+              max={370}
               required
               suffix="days"
             />
             <NumberInput
               id="pred-passengers"
               label="Passenger Count"
-              value={form.passengerCount}
-              onChange={(v) => update('passengerCount', String(v))}
+              value={form.passenger_count}
+              onChange={(v) => update('passenger_count', String(v))}
               min={1}
-              max={6}
+              max={9}
               required
-            />
-            <NumberInput
-              id="pred-departure-hour"
-              label="Departure Hour"
-              value={form.departureHour}
-              onChange={(v) => update('departureHour', String(v))}
-              min={0}
-              max={23}
-              required
-              suffix="24h"
-            />
-            <NumberInput
-              id="pred-arrival-hour"
-              label="Arrival Hour"
-              value={form.arrivalHour}
-              onChange={(v) => update('arrivalHour', String(v))}
-              min={0}
-              max={23}
-              required
-              suffix="24h"
             />
           </div>
 
@@ -295,10 +317,10 @@ export default function Prediction() {
                   className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
                   aria-hidden="true"
                 />
-                Generating prediction...
+                Predicting fare...
               </>
             ) : (
-              <>Predict price</>
+              <>Predict fare</>
             )}
           </button>
         </form>
@@ -312,7 +334,7 @@ export default function Prediction() {
               className="h-8 w-8 animate-spin rounded-full border-[3px] border-slate-200 border-t-brand-500"
               aria-hidden="true"
             />
-            <p className="text-sm font-medium">Generating prediction...</p>
+            <p className="text-sm font-medium">Predicting fare...</p>
           </div>
         ) : result ? (
           <PredictionResult result={result} />
@@ -326,7 +348,7 @@ export default function Prediction() {
             </p>
             <p className="max-w-xs text-sm text-slate-500">
               Fill in the flight details and submit the form to see an estimated
-              price.
+              fare.
             </p>
           </div>
         )}
