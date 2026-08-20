@@ -1,0 +1,39 @@
+{
+    "model_name": "FareSight Final Model",
+    "algorithm": "HistGradientBoostingRegressor",
+    "training_rows": 93083,
+    "features": [
+        "Total_Stops",
+        "Distance_km",
+        "Days_Before_Departure",
+        "Passenger_Count",
+        "Departure_Year",
+        "Departure_Month",
+        "Departure_Day",
+        "Departure_DayOfWeek",
+        "Departure_Hour",
+        "Arrival_Hour",
+        "Duration_Minutes",
+        "Airline",
+        "Source",
+        "Destination",
+        "Travel_Class",
+        "Season",
+        "Weekday",
+        "Aircraft_Type",
+        "Booking_Channel"
+    ],
+    "hyperparameters": {
+        "model": "HistGradientBoostingRegressor",
+        "learning_rate": 0.05,
+        "max_iter": 400,
+        "max_leaf_nodes": 63,
+        "l2_regularization": 1.0,
+        "random_state": 42
+    },
+    "validation_metrics": {
+        "mae": 13851.14,
+        "rmse": 40048.69,
+        "r2": 0.708
+    }
+}
