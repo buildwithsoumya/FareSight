@@ -1,4 +1,4 @@
-<h1 align="center">✈️ FareSight — Travel Analyst</h1>
+<h1 align="center">FareSight - Travel Analyst</h1>
 
 <p align="center"><strong>Explore flight fares. Understand the drivers. Predict smarter prices.</strong></p>
 
@@ -10,11 +10,11 @@
   <img alt="Vite" src="https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white" />
 </p>
 
-> 🟢 **Status: Complete** — end-to-end ML project: data pipeline → EDA → model experiments → REST API → React dashboard.
+> **Status: Complete** — end-to-end ML project: data pipeline → EDA → model experiments → REST API → React dashboard.
 
 ---
 
-## 📌 Overview
+## Overview
 
 FareSight is a full-stack AI travel-fare analyst. It cleans and explores a
 100,000-row flight-pricing dataset, trains regression models to predict fares,
@@ -30,7 +30,7 @@ preprocessing, EDA, feature engineering, model comparison, hyperparameter
 tuning, model selection, a prediction REST API, and a production-style
 frontend.
 
-## 🎯 Why this project exists
+## Why this project exists
 
 Flight fares are volatile, opaque, and driven by many interacting factors —
 airline, route, stops, duration, travel class, booking lead time, and season.
@@ -41,7 +41,7 @@ turns a messy pricing dataset into:
 2. **Prediction** — a trained model that estimates a fare from raw flight details.
 3. **Usability** — a clean API and dashboard so the analysis is actually usable.
 
-## ✨ Features
+## Features
 
 | Area | Feature |
 | ---- | ------- |
@@ -54,24 +54,24 @@ turns a messy pricing dataset into:
 | Frontend | React + Vite + Tailwind dashboard with live prediction and analytics |
 | Integration | Live API health indicator, real prediction flow, loading/error/empty states |
 
-## 🏗️ Architecture
+## Architecture
 
 FareSight is a hub-and-spoke system: the ML pipeline is the core, the FastAPI
 backend serves it, and the React dashboard consumes it.
 
 ```mermaid
 flowchart TD
-    FS["✈️ FareSight"]
-    UI["🖥️ React Dashboard"]
-    API["⚡ FastAPI"]
-    SCHEMAS["📋 Pydantic Schemas"]
-    PE["🔮 Prediction Engine<br/>predict_fare()"]
-    FE["⚙️ Shared Feature<br/>Engineering"]
-    ML["🧠 ML Pipeline"]
-    HGB["🌲 HistGradientBoosting"]
-    PRED["💰 Predicted Fare"]
-    ANA["📊 Analytics API"]
-    EDA["🔍 EDA Results"]
+    FS["FareSight"]
+    UI["React Dashboard"]
+    API["FastAPI"]
+    SCHEMAS["Pydantic Schemas"]
+    PE["Prediction Engine<br/>predict_fare()"]
+    FE["Shared Feature<br/>Engineering"]
+    ML["ML Pipeline"]
+    HGB["HistGradientBoosting"]
+    PRED["Predicted Fare"]
+    ANA["Analytics API"]
+    EDA["EDA Results"]
 
     FS --- UI
     FS --- API
@@ -94,7 +94,7 @@ flowchart TD
     class UI,API,SCHEMAS,PE,FE,ML,HGB,PRED,ANA,EDA flow;
 ```
 
-## 📊 Dataset
+## Dataset
 
 | Property | Value |
 | -------- | ----- |
@@ -110,7 +110,7 @@ Fields: `Airline`, `Source`, `Destination`, `Departure_Date`, `Departure_Time`,
 `Days_Before_Departure`, `Season`, `Weekday`, `Aircraft_Type`,
 `Booking_Channel`, `Passenger_Count`, `Price`.
 
-## 🧹 Data Preprocessing
+## Data Preprocessing
 
 `backend/app/data/preprocessor.py` runs the full cleaning pipeline:
 
@@ -125,7 +125,7 @@ Fields: `Airline`, `Source`, `Destination`, `Departure_Date`, `Departure_Time`,
 - **Missing values** — categoricals filled with `Unknown`; numerics imputed in the pipeline.
 - **Validation** — negative prices/durations/distances rejected.
 
-## 🔍 Exploratory Data Analysis
+## Exploratory Data Analysis
 
 `backend/app/analysis/eda.py` produces 11 plots in `outputs/plots/`:
 
@@ -152,7 +152,7 @@ Key verified findings:
 - **Seasonal** differences are real but modest (Summer ₹77,101 vs Monsoon ₹69,252).
 - **Booking lead time** has a weak negative relationship with fare.
 
-## ⚙️ Feature Engineering
+## Feature Engineering
 
 `backend/app/models/feature_engineering.py` provides the single shared
 `engineer_features()` used by both **training and prediction**:
@@ -166,7 +166,7 @@ Key verified findings:
 A `ColumnTransformer` pipeline applies median imputation to numerics and
 most-frequent imputation + one-hot encoding to categoricals.
 
-## 🤖 Model Experiments
+## Model Experiments
 
 `docs/experiments/experiment_log.md` documents the full comparison:
 
@@ -190,7 +190,7 @@ most-frequent imputation + one-hot encoding to categoricals.
 
 **Artifacts:** `models/faresight_model.joblib` + `models/faresight_model_metadata.json`.
 
-## 🔮 Prediction Engine
+## Prediction Engine
 
 `backend/app/prediction/predictor.py` loads the model **once** at import time
 and exposes `predict_fare(...)`. Raw inputs are converted into the engineered
@@ -215,7 +215,7 @@ Verified prediction outputs (from `test_predictor.py`):
 | Multiple stops | ₹5,521.87 |
 | International | ₹24,867.55 |
 
-## ⚡ FastAPI Backend
+## FastAPI Backend
 
 `backend/app/main.py` wires the app with CORS, OpenAPI metadata, and route
 registration. The model is loaded once at startup — not per request.
@@ -282,7 +282,7 @@ passenger count 1–9, stops 0–10, lead time ≥ 0), date format
 (`YYYY-MM-DD`), and source ≠ destination. Invalid requests return clean
 `422` responses with field-level messages — no stack traces.
 
-## 🖥️ React Dashboard
+## React Dashboard
 
 `frontend/` — Vite + React + TypeScript + Tailwind CSS + Recharts + Axios.
 
@@ -300,13 +300,13 @@ states, and the layout is responsive (sidebar drawer on mobile).
 The prediction form sends **raw flight fields** — the backend derives
 engineered features, mirroring the training pipeline exactly.
 
-## 📡 API Service Layer
+## API Service Layer
 
 All HTTP lives in `frontend/src/services/api.ts` — components never call
 Axios directly. `VITE_API_BASE_URL` (see `frontend/.env.example`) points at
 the backend; it defaults to `http://localhost:8000`.
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 FareSight/
@@ -347,7 +347,7 @@ FareSight/
 └── README.md
 ```
 
-## 🛠️ Installation
+## Installation
 
 ### Backend
 
@@ -384,7 +384,7 @@ VITE_API_BASE_URL=http://localhost:8000
 
 No secrets are committed.
 
-## 🚀 Running locally
+## Running locally
 
 ```bash
 # Terminal 1 — backend
@@ -399,7 +399,7 @@ npm run dev
 Open <http://localhost:5173> (dashboard) and <http://localhost:8000/docs>
 (API docs).
 
-## 🧪 Testing
+## Testing
 
 - **Backend:** `python backend/app/prediction/test_predictor.py` — verifies
   the four documented prediction scenarios (all pass).
@@ -410,7 +410,7 @@ Open <http://localhost:5173> (dashboard) and <http://localhost:8000/docs>
 - **Frontend:** `npm run build` passes type checking and the production
   build; dev-server route checks return 200 for all pages.
 
-## ⚠️ Limitations
+## Limitations
 
 - Fare predictions are **ML estimates** — actual fares vary with demand,
   promotions, and booking dynamics not present in a static dataset.
@@ -419,14 +419,14 @@ Open <http://localhost:5173> (dashboard) and <http://localhost:8000/docs>
 - Analytics reflect the **historical dataset**, not live market data.
 - Feature importance describes model weighting, not causal effect.
 
-## 🔭 Future improvements
+## Future improvements
 
 - Deploy the FastAPI backend and dashboard (e.g., Railway / Vercel).
 - Add live-demand features (day-of-week booking curves, competitor fares).
 - Forecasting and cheapest-booking-time analysis (Part 3 stretch goals).
 - Model monitoring and periodic retraining on fresh data.
 
-## 🎓 Recruitment challenge context
+## Recruitment challenge context
 
 Developed for the **MIC AIML Department Recruitment Challenge — Data Science &
 Visualization (AI Travel Analyst)** track:
@@ -434,13 +434,3 @@ Visualization (AI Travel Analyst)** track:
 - **Part 1 — Exploration:** cleaning, 11 visualizations, price-factor analysis, insights. ✅
 - **Part 2 — Modeling:** feature engineering, model comparison, tuning, final model, evaluation. ✅
 - **Part 3 — Stretch (optional):** cheapest booking time, forecasting, recommendation — **not implemented**.
-
-## 👤 Author
-
-**Soumya** — 2nd-year CSE student.
-
-- GitHub: [buildwithsoumya](https://github.com/buildwithsoumya)
-
-## 📄 License
-
-No license file has been added yet.
