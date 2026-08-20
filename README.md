@@ -1,276 +1,355 @@
-<h1 align="center">FareSight - AI Travel Analyst</h1>
+<h1 align="center">✈️ FareSight — Travel Analyst</h1>
 
-<p align="center"><strong>Explore flight prices. Understand the factors. Predict smarter fares.</strong></p>
+<p align="center"><strong>Explore flight fares. Understand the drivers. Predict smarter prices.</strong></p>
+
+<p align="center">
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white" />
+  <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.141-009688?logo=fastapi&logoColor=white" />
+  <img alt="Scikit-learn" src="https://img.shields.io/badge/Scikit--learn-1.9-F7931E?logo=scikit-learn&logoColor=white" />
+  <img alt="React" src="https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white" />
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white" />
+</p>
+
+> 🟢 **Status: Complete** — end-to-end ML project: data pipeline → EDA → model experiments → REST API → React dashboard.
 
 ---
 
-> 🚧 **Status: In Development**
->
-> FareSight is being built incrementally, starting with data exploration and machine-learning foundations before completing the full interactive dashboard. The repository currently contains only the project scaffold (`.gitignore`); no source code, notebooks, or trained models have been committed yet. Everything marked **Planned** below describes the target design, not current functionality.
+## 📌 Overview
 
----
+FareSight is a full-stack AI travel-fare analyst. It cleans and explores a
+100,000-row flight-pricing dataset, trains regression models to predict fares,
+and exposes the result through a **FastAPI** backend and a **React** dashboard.
 
-## Project Overview
+The project answers one practical question:
 
-FareSight is an end-to-end flight-price intelligence system. It combines **exploratory data analysis (EDA)**, **machine-learning-based price prediction**, and a **FastAPI + React dashboard** to answer one practical question:
+> **What drives flight fares, and can we predict them before booking?**
 
-> **What drives flight prices, and can we predict them before booking?**
+Built for the **MIC AIML Department Recruitment Challenge** (Data Science &
+Visualization track), FareSight demonstrates the complete ML lifecycle —
+preprocessing, EDA, feature engineering, model comparison, hyperparameter
+tuning, model selection, a prediction REST API, and a production-style
+frontend.
 
+## 🎯 Why this project exists
 
-## Problem Statement
+Flight fares are volatile, opaque, and driven by many interacting factors —
+airline, route, stops, duration, travel class, booking lead time, and season.
+Travellers rarely know whether the fare they see is reasonable. FareSight
+turns a messy pricing dataset into:
 
-Flight prices are volatile, opaque, and influenced by many interacting factors - airline, route, number of stops, duration, departure time, season, and more. Travellers rarely know whether the fare they see is reasonable, and understanding *why* a price is high is even harder.
+1. **Understanding** — which factors most strongly relate to fare.
+2. **Prediction** — a trained model that estimates a fare from raw flight details.
+3. **Usability** — a clean API and dashboard so the analysis is actually usable.
 
-FareSight addresses this by:
+## ✨ Features
 
-1. Cleaning and exploring a flight-price dataset to surface the major price drivers.
-2. Building a regression model that estimates flight prices from flight characteristics.
-3. Exposing the model through a clean API and dashboard so insights and predictions are actually usable.
+| Area | Feature |
+| ---- | ------- |
+| Data | Cleaning pipeline (duplicates, types, dates, times, durations, outliers) |
+| EDA | 11 visualizations covering price distribution, airlines, classes, stops, seasons, channels, sources, correlation |
+| ML | Model comparison (Linear Regression, Random Forest, HistGradientBoosting) + hyperparameter tuning |
+| Prediction | Shared feature engineering + trained HistGradientBoosting model (`predict_fare`) |
+| API | FastAPI with typed Pydantic schemas, validation, CORS, `/docs` and `/redoc` |
+| Analytics API | Precomputed aggregates from the verified EDA results |
+| Frontend | React + Vite + Tailwind dashboard with live prediction and analytics |
+| Integration | Live API health indicator, real prediction flow, loading/error/empty states |
 
-## Objectives
+## 🏗️ Architecture
 
-- **Explore** - Preprocess the flight-price dataset and produce at least 5 meaningful visualizations.
-- **Understand** - Identify the major factors affecting flight prices and translate them into actionable insights.
-- **Model** - Engineer features and train a regression model to predict flight prices.
-- **Evaluate** - Report model performance transparently (MAE, RMSE, R²) and explain which features drive predictions.
-- **Deliver** - Package the analysis and model behind a FastAPI backend with a React dashboard.
-
-## Challenge Scope
-
-| Part | Focus | Status |
-| ---- | ----- | ------ |
-| Part 1 | Exploration - cleaning, ≥5 visualizations, price-factor analysis, insights | **Planned** |
-| Part 2 | Modeling - feature engineering, training, evaluation, feature explanation | **Planned** |
-| Part 3 | Optional stretch - cheapest booking time, price forecasting, recommendation system | **Not started** |
-
-
-## Key Features
-
-| Feature | Description | Status |
-| ------- | ----------- | ------ |
-| Dataset cleaning & preprocessing | Missing values, duplicates, data-type and date/time handling | **Planned** |
-| Exploratory data analysis | ≥5 visualizations: price distribution, airline, stops, duration, routes, time | **Planned** |
-| Price-factor insights | Data-driven explanation of what drives flight prices | **Planned** |
-| Feature engineering | Encoding, time-based features, derived duration/route features | **Planned** |
-| Price prediction model | Regression models trained and evaluated on the dataset | **Planned** |
-| Model evaluation & explanation | MAE / RMSE / R² reporting and feature-importance analysis | **Planned** |
-| FastAPI backend | REST API serving overview, analysis, and prediction endpoints | **Planned** |
-| React dashboard | Interactive overview, charts, insights, and prediction UI | **Planned** |
-
-## System Architecture
-
-FareSight is designed as a **hub-and-spoke system**: every component feeds into or reads from the core application, while the data still flows naturally from dataset → processing → model → API → dashboard.
+FareSight is a hub-and-spoke system: the ML pipeline is the core, the FastAPI
+backend serves it, and the React dashboard consumes it.
 
 ```mermaid
 flowchart TD
-    FS["FareSight<br/>AI Travel Analyst"]
-    DS["Flight Dataset"]
-    DP["Data Processing"]
-    EDA["Exploratory<br/>Data Analysis"]
-    FE["Feature<br/>Engineering"]
-    ML["ML Model"]
-    EVAL["Evaluation"]
-    API["FastAPI Backend"]
-    UI["React Dashboard"]
-    PRED["Prediction"]
-    INS["Insights"]
+    FS["✈️ FareSight"]
+    UI["🖥️ React Dashboard"]
+    API["⚡ FastAPI"]
+    SCHEMAS["📋 Pydantic Schemas"]
+    PE["🔮 Prediction Engine<br/>predict_fare()"]
+    FE["⚙️ Shared Feature<br/>Engineering"]
+    ML["🧠 ML Pipeline"]
+    HGB["🌲 HistGradientBoosting"]
+    PRED["💰 Predicted Fare"]
+    ANA["📊 Analytics API"]
+    EDA["🔍 EDA Results"]
 
-    FS --- DS
-    FS --- DP
-    FS --- EDA
-    FS --- FE
-    FS --- ML
-    FS --- API
     FS --- UI
-
-    DS --> DP
-    DP --> EDA
-    DP --> FE
-    EDA --> INS
-    EDA --> ML
+    FS --- API
+    UI -->|"POST /api/predict"| API
+    UI -->|"GET /api/analytics/*"| ANA
+    API --> SCHEMAS
+    API --> PE
+    PE --> FE
     FE --> ML
-    ML --> EVAL
-    ML --> API
+    ML --> HGB
+    HGB --> PRED
+    PRED --> API
     API --> UI
-    UI --> PRED
-    UI --> INS
+    ANA --> EDA
+    ANA --> UI
 
     classDef core fill:#2a6a96,color:#ffffff,stroke:#1e4f72,stroke-width:2px;
-    classDef planned fill:#4d8cbb,color:#ffffff,stroke:#2a6a96,stroke-dasharray:4 3;
+    classDef flow fill:#4d8cbb,color:#ffffff,stroke:#2a6a96,stroke-width:2px;
     class FS core;
-    class DS,DP,EDA,FE,ML,EVAL,API,UI,PRED,INS planned;
+    class UI,API,SCHEMAS,PE,FE,ML,HGB,PRED,ANA,EDA flow;
 ```
 
-> **Note:** The dashed nodes represent the *target* architecture. No component has been implemented in the repository yet.
+## 📊 Dataset
 
-## Project Workflow
+| Property | Value |
+| -------- | ----- |
+| File | `data/flight_pricing_dataset.csv` |
+| Rows (raw) | 100,000 |
+| Columns | 18 |
+| Rows (after dedup) | 98,039 |
+| Processed file | `data/processed/flight_prices_clean.csv` |
+| Target | `Price` (₹, INR) |
 
-The intended end-to-end pipeline:
+Fields: `Airline`, `Source`, `Destination`, `Departure_Date`, `Departure_Time`,
+`Arrival_Time`, `Duration`, `Total_Stops`, `Distance_km`, `Travel_Class`,
+`Days_Before_Departure`, `Season`, `Weekday`, `Aircraft_Type`,
+`Booking_Channel`, `Passenger_Count`, `Price`.
 
-```mermaid
-flowchart LR
-    A["Dataset"] --> B["Data Cleaning"]
-    B --> C["EDA"]
-    C --> D["Feature Engineering"]
-    D --> E["Train / Test Split"]
-    E --> F["Model Training"]
-    F --> G["Model Evaluation"]
-    G --> H["Model Persistence"]
-    H --> I["FastAPI"]
-    I --> J["React Dashboard"]
+## 🧹 Data Preprocessing
 
-    classDef step fill:#4d8cbb,color:#ffffff,stroke:#2a6a96,stroke-width:2px;
-    class A,B,C,D,E,F,G,H,I,J step;
-```
+`backend/app/data/preprocessor.py` runs the full cleaning pipeline:
 
-**Current status:** the pipeline is at the very first stage — the repository scaffold is in place and the dataset pipeline has not been built yet.
+- **Duplicate removal** — 100,000 → 98,039 rows.
+- **String normalization** — airline names, city aliases (IATA ↔ city name).
+- **Date parsing** — derives year, month, day, day-of-week from `Departure_Date`.
+- **Time parsing** — mixed 12h/24h formats → `Departure_Hour`, `Arrival_Hour`.
+- **Duration parsing** — `"2h 15m"`, `"177 min"`, and decimal hours → minutes.
+- **Stops normalization** — `"non-stop"` / `"1 stop"` / `"2 stops"` → integers.
+- **Price cleaning** — `"Rs. 5,181.56"` → numeric.
+- **Passenger counts** — word forms (`"two"`) → integers.
+- **Missing values** — categoricals filled with `Unknown`; numerics imputed in the pipeline.
+- **Validation** — negative prices/durations/distances rejected.
 
-## Tech Stack
+## 🔍 Exploratory Data Analysis
 
-> All technologies below are part of the **planned** stack. They will be listed as implemented only once the corresponding code exists in the repository.
+`backend/app/analysis/eda.py` produces 11 plots in `outputs/plots/`:
 
-| Layer | Technology | Purpose |
-| ----- | ---------- | ------- |
-| Frontend | React + Vite | Component-based dashboard UI |
-| Frontend | Tailwind CSS | Styling and responsive layout |
-| Frontend | Recharts | Interactive price visualizations |
-| Frontend | Axios | HTTP communication with the backend |
-| Backend | Python + FastAPI | REST API serving data and predictions |
-| Backend | Pydantic | Request/response validation |
-| Data Science | Pandas, NumPy | Data cleaning and manipulation |
-| Data Science | Scikit-learn | Feature engineering and regression models |
-| Data Science | Matplotlib, Seaborn | Visualizations |
-| Data Science | Joblib | Model persistence |
+| # | Plot | File |
+| - | ---- | ---- |
+| 1 | Flight price distribution | `01_price_distribution.png` |
+| 2 | Average price by airline | `02_price_by_airline.png` |
+| 3 | Price by travel class | `03_price_by_travel_class.png` |
+| 4 | Price by stops | `04_price_by_stops.png` |
+| 5 | Price vs duration | `05_price_vs_duration.png` |
+| 6 | Price by booking channel | `06_price_by_booking_channel.png` |
+| 7 | Price by source | `07_price_by_source.png` |
+| 8 | Price by season | `08_price_by_season.png` |
+| 9 | Price vs days before departure | `09_price_vs_days_before_departure.png` |
+| 10 | Correlation matrix | `10_correlation_matrix.png` |
+| 11 | Feature importance | `11_feature_importance.png` |
 
-## Project Structure
+Key verified findings:
 
-The target repository layout (to be created in upcoming milestones):
+- **Travel class** strongly relates to fare: Economy ₹59,668 → First ₹133,873.
+- **Distance and duration** are near-identical (Pearson ≈ 0.99) and are the strongest predictors.
+- **Stops** raise average fare: ₹61,603 (0 stops) → ₹84,661 (2 stops).
+- **Booking channel** differences are small (< ₹1,200 across channels).
+- **Seasonal** differences are real but modest (Summer ₹77,101 vs Monsoon ₹69,252).
+- **Booking lead time** has a weak negative relationship with fare.
+
+## ⚙️ Feature Engineering
+
+`backend/app/models/feature_engineering.py` provides the single shared
+`engineer_features()` used by both **training and prediction**:
+
+- Numerical: `Total_Stops`, `Distance_km`, `Days_Before_Departure`,
+  `Passenger_Count`, `Departure_Year`, `Departure_Month`, `Departure_Day`,
+  `Departure_DayOfWeek`, `Departure_Hour`, `Arrival_Hour`, `Duration_Minutes`.
+- Categorical: `Airline`, `Source`, `Destination`, `Travel_Class`, `Season`,
+  `Weekday`, `Aircraft_Type`, `Booking_Channel`.
+
+A `ColumnTransformer` pipeline applies median imputation to numerics and
+most-frequent imputation + one-hot encoding to categoricals.
+
+## 🤖 Model Experiments
+
+`docs/experiments/experiment_log.md` documents the full comparison:
+
+| Experiment | Model | Key change | MAE | RMSE | R² | Decision |
+| --- | --- | --- | ---: | ---: | ---: | --- |
+| Baseline | Linear Regression | — | ₹23,097.40 | ₹45,456.32 | 0.6238 | Baseline |
+| Baseline | Random Forest | — | ₹15,394.65 | ₹42,214.69 | 0.6756 | Current best |
+| Feature selection | Random Forest | Distance + Duration | ₹15,394.65 | ₹42,214.69 | 0.6756 | Keep both |
+| Feature selection | Random Forest | Distance only | ₹15,667.57 | ₹42,169.56 | 0.6763 | Reject |
+| Feature selection | Random Forest | Duration only | ₹16,091.45 | ₹42,789.61 | 0.6667 | Reject |
+| Tuning | HistGradientBoosting | Defaults | ₹13,998.13 | ₹40,133.49 | 0.7068 | Tune further |
+| **Final** | **HistGradientBoosting** | **Tuned** | **₹13,851.14** | **₹40,048.69** | **0.7080** | **Selected** |
+
+**Final model configuration** (`HistGradientBoostingRegressor`):
+
+- `learning_rate = 0.05`
+- `max_iter = 400`
+- `max_leaf_nodes = 63`
+- `l2_regularization = 1.0`
+- `random_state = 42`
+
+**Artifacts:** `models/faresight_model.joblib` + `models/faresight_model_metadata.json`.
+
+## 🔮 Prediction Engine
+
+`backend/app/prediction/predictor.py` loads the model **once** at import time
+and exposes `predict_fare(...)`. Raw inputs are converted into the engineered
+feature space via the shared `engineer_features()` — no logic duplication.
 
 ```text
-FareSight/
-├── backend/                  # FastAPI application — Planned
-│   ├── app/
-│   │   ├── main.py           # App entry point
-│   │   ├── models.py         # Pydantic schemas
-│   │   └── routers/          # API route handlers
-│   ├── requirements.txt
-│   └── model/                # Trained model artifacts (.joblib / .pkl)
-├── frontend/                 # React + Vite dashboard — Planned
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   └── api/
-│   └── package.json
-├── notebooks/                # EDA & modeling notebooks — Planned
-├── data/                     # Flight-price datasets (git-ignored)
-├── models/                   # Serialized models (git-ignored)
-└── README.md
+Raw flight details
+        ↓
+engineer_features()
+        ↓
+Trained model pipeline
+        ↓
+Predicted fare (₹)
 ```
 
-## Data Science Pipeline
+Verified prediction outputs (from `test_predictor.py`):
 
-### Data Cleaning
+| Scenario | Predicted fare |
+| -------- | -------------: |
+| Economy / direct | ₹8,626.44 |
+| Business class | ₹13,674.94 |
+| Multiple stops | ₹5,521.87 |
+| International | ₹24,867.55 |
 
-The planned cleaning stage will cover:
+## ⚡ FastAPI Backend
 
-- **Missing-value handling** — detection and a documented imputation/dropping strategy.
-- **Duplicate detection** — removing or flagging duplicate records.
-- **Data-type conversion** — numeric, categorical, and datetime fields cast correctly.
-- **Date/time processing** — extraction of month, day, weekday, and season features.
-- **Duration processing** — parsing and normalizing flight-duration fields.
-- **Categorical-value consistency** — standardizing airline, city, and route labels.
-- **Outlier investigation** — identifying extreme fares and deciding how to treat them.
+`backend/app/main.py` wires the app with CORS, OpenAPI metadata, and route
+registration. The model is loaded once at startup — not per request.
 
-These operations will be implemented and documented as the notebooks are added.
-
-### Exploratory Data Analysis
-
-The planned EDA includes the analyses required by the challenge (≥5 meaningful visualizations):
-
-- Flight **price distribution**
-- **Price by airline**
-- **Price vs number of stops**
-- **Price vs duration**
-- **Price by source / destination** (route analysis)
-- **Time-based price analysis** (month, weekday, season)
-- **Correlation analysis** between numeric features and price
-
-Visualizations will be generated with Matplotlib and Seaborn and exported from the notebooks. Findings and recommendations will be added here once the analysis is complete.
-
-### Feature Engineering
-
-Planned features include:
-
-- Categorical encoding for airline, source, destination, and route.
-- Derived features such as flight duration in minutes and number of stops.
-- Time-based features (departure hour, month, weekday, season).
-- Any engineered interaction features that the EDA suggests are relevant.
-
-## Machine Learning
-
-FareSight approaches flight-price prediction as a **supervised regression problem**: given flight characteristics, predict the price.
-
-### Planned Models
-
-- **Linear Regression** — a simple, interpretable baseline.
-- **Decision Tree Regressor** — captures non-linear price relationships.
-- **Random Forest Regressor** — an ensemble expected to give the strongest baseline performance.
-
-### Planned Evaluation
-
-Models will be evaluated on a held-out test split using:
-
-- **MAE** — mean absolute error (interpretable in currency terms).
-- **RMSE** — root mean squared error (penalizes large errors).
-- **R²** — proportion of variance explained.
-
-**Model interpretability:** feature-importance analysis will be used to explain which factors (e.g., number of stops, duration, airline, route) drive predictions most strongly.
-
-> **Status:** no model has been trained yet, and no performance numbers exist in the repository. Metrics will be reported here after training and evaluation.
-
-## Backend Architecture
-
-### Planned Request Flow
-
-```mermaid
-flowchart TD
-    UI["React Dashboard"] -->|"POST /api/predict"| API["FastAPI"]
-    API --> PP["Preprocessing"]
-    PP --> MODEL["Trained ML Model"]
-    MODEL --> RESP["JSON Response"]
-    RESP --> UI
-
-    classDef flow fill:#4d8cbb,color:#ffffff,stroke:#2a6a96,stroke-width:2px;
-    class UI,API,PP,MODEL,RESP flow;
-```
-
-### Planned API Endpoints
+### Endpoints
 
 | Method | Endpoint | Purpose |
 | ------ | -------- | ------- |
-| GET | `/api/overview` | Dataset statistics and summary metrics |
-| GET | `/api/analysis` | Aggregated EDA results and insights |
-| POST | `/api/predict` | Return a predicted price for given flight characteristics |
+| GET | `/` | Welcome message |
+| GET | `/api/health` | Health check (also used by the dashboard indicator) |
+| POST | `/api/predict` | Predict fare from raw flight details |
+| GET | `/api/analytics/summary` | Dataset summary statistics |
+| GET | `/api/analytics/airlines` | Average fare by airline |
+| GET | `/api/analytics/classes` | Average fare by travel class |
+| GET | `/api/analytics/stops` | Average fare by stops |
+| GET | `/api/analytics/seasons` | Average fare by season |
+| GET | `/api/analytics/sources` | Average fare by source city |
+| GET | `/api/analytics/destinations` | Average fare by destination city |
+| GET | `/api/analytics/booking-channels` | Average fare by booking channel |
+| GET | `/api/analytics/duration` | Fare-vs-duration scatter + correlation |
+| GET | `/api/analytics/days-before-departure` | Fare-vs-lead-time scatter + correlation |
+| GET | `/api/analytics/feature-importance` | Model feature importance |
 
-> **Status:** the backend does not exist yet; these endpoints are part of the planned design.
+Interactive docs at `/docs` (Swagger) and `/redoc`.
 
-## Frontend Dashboard
+### Example request
 
-### Planned Sections
+```bash
+curl -X POST http://localhost:8000/api/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "airline": "Indigo",
+    "source": "Delhi",
+    "destination": "Mumbai",
+    "departure_date": "2026-09-15",
+    "departure_time": "10:30 AM",
+    "arrival_time": "12:45 PM",
+    "duration": "2h 15m",
+    "total_stops": 0,
+    "distance_km": 1150,
+    "travel_class": "Economy",
+    "days_before_departure": 30,
+    "season": "Monsoon",
+    "weekday": "Tuesday",
+    "aircraft_type": "Airbus A320",
+    "booking_channel": "Website",
+    "passenger_count": 1
+  }'
+```
 
-- **Overview** — dataset statistics: average price, min/max price, airline and route stats.
-- **Price Analysis** — interactive charts (Recharts) with filters for airline, route, and stops.
-- **Insights** — key findings surfaced from the EDA stage.
-- **Price Prediction** — a form where users enter flight characteristics and receive an estimated price from the model.
-- **Model** — performance metrics and feature-importance visualization.
+### Example response
 
-> **Status:** the frontend does not exist yet; these sections are part of the planned design.
+```json
+{
+  "predicted_price": 8626.44,
+  "currency": "INR"
+}
+```
 
-## Installation
+### Validation & error handling
 
-The repository is currently scaffold-only, so there is no runnable application code to install yet. The following commands describe the **planned** setup and will apply once the `backend/` and `frontend/` directories are added.
+Pydantic schemas enforce required fields, numeric ranges (distance > 0,
+passenger count 1–9, stops 0–10, lead time ≥ 0), date format
+(`YYYY-MM-DD`), and source ≠ destination. Invalid requests return clean
+`422` responses with field-level messages — no stack traces.
 
-### Planned — Backend (Python)
+## 🖥️ React Dashboard
+
+`frontend/` — Vite + React + TypeScript + Tailwind CSS + Recharts + Axios.
+
+| Page | Contents |
+| ---- | -------- |
+| Dashboard | KPI cards (avg/min/max fare, flights analyzed) + fare-by-airline / class / stops charts |
+| Analytics | Fare by season, channel, source, destination + fare-vs-duration and fare-vs-lead-time scatter plots |
+| Prediction | Full flight form (date/time pickers, selects, numeric inputs) → live fare estimate |
+| Insights | Model feature importance chart + model comparison table + EDA findings |
+
+The header shows a live **API Online / Offline** indicator via
+`GET /api/health`. Every API-backed view implements loading, error, and empty
+states, and the layout is responsive (sidebar drawer on mobile).
+
+The prediction form sends **raw flight fields** — the backend derives
+engineered features, mirroring the training pipeline exactly.
+
+## 📡 API Service Layer
+
+All HTTP lives in `frontend/src/services/api.ts` — components never call
+Axios directly. `VITE_API_BASE_URL` (see `frontend/.env.example`) points at
+the backend; it defaults to `http://localhost:8000`.
+
+## 📁 Project Structure
+
+```text
+FareSight/
+├── backend/
+│   └── app/
+│       ├── main.py                 # FastAPI app, CORS, docs
+│       ├── api/routes.py           # API routes
+│       ├── schemas/prediction.py   # Pydantic schemas
+│       ├── prediction/
+│       │   ├── predictor.py        # predict_fare() — model loaded once
+│       │   └── test_predictor.py   # Verified prediction tests
+│       ├── models/
+│       │   ├── feature_engineering.py
+│       │   ├── train.py
+│       │   ├── train_final.py
+│       │   ├── tune_gradient_boosting.py
+│       │   └── feature_selection.py
+│       ├── data/                   # preprocessing pipeline
+│       └── analysis/               # EDA, feature importance, analytics
+├── frontend/
+│   ├── src/
+│   │   ├── pages/                  # Dashboard, Analytics, Prediction, Insights
+│   │   ├── components/             # layout, cards, charts, forms, common
+│   │   ├── services/api.ts         # Axios layer
+│   │   ├── hooks/                  # useAsyncData, useApiHealth
+│   │   ├── types/                  # API types + form options
+│   │   └── utils/                  # formatting helpers
+│   ├── .env.example
+│   └── package.json
+├── data/
+│   ├── flight_pricing_dataset.csv
+│   └── processed/flight_prices_clean.csv
+├── models/
+│   ├── faresight_model.joblib
+│   └── faresight_model_metadata.json
+├── outputs/plots/                  # EDA visualizations
+├── docs/experiments/               # experiment logs
+└── README.md
+```
+
+## 🛠️ Installation
+
+### Backend
 
 ```bash
 python -m venv .venv
@@ -288,65 +367,80 @@ Then:
 pip install -r backend/requirements.txt
 ```
 
-### Planned — Frontend (React + Vite)
+### Frontend
 
 ```bash
 cd frontend
 npm install
+```
+
+### Environment variables
+
+Copy `frontend/.env.example` to `frontend/.env.local` and adjust if needed:
+
+```env
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+No secrets are committed.
+
+## 🚀 Running locally
+
+```bash
+# Terminal 1 — backend
+cd backend
+uvicorn app.main:app --reload --port 8000
+
+# Terminal 2 — frontend
+cd frontend
 npm run dev
 ```
 
-## Usage
+Open <http://localhost:5173> (dashboard) and <http://localhost:8000/docs>
+(API docs).
 
-Once implemented, the intended usage flow is:
+## 🧪 Testing
 
-1. Run the FastAPI backend (serves the API and model predictions).
-2. Start the Vite dev server for the React dashboard.
-3. Open the dashboard to explore the visualizations, review insights, and test price predictions.
+- **Backend:** `python backend/app/prediction/test_predictor.py` — verifies
+  the four documented prediction scenarios (all pass).
+- **API:** every endpoint was exercised with `curl` (root, health, prediction,
+  all 10 analytics endpoints) plus invalid-input cases (negative distance,
+  zero passengers, same source/destination, malformed date) — all return clean
+  errors.
+- **Frontend:** `npm run build` passes type checking and the production
+  build; dev-server route checks return 200 for all pages.
 
-Detailed run instructions will be added as the components are built.
+## ⚠️ Limitations
 
-## API Overview
+- Fare predictions are **ML estimates** — actual fares vary with demand,
+  promotions, and booking dynamics not present in a static dataset.
+- The model explains ~71% of fare variance (R² 0.708); the residual error is
+  meaningful for price-sensitive decisions.
+- Analytics reflect the **historical dataset**, not live market data.
+- Feature importance describes model weighting, not causal effect.
 
-The planned API contract is summarized below and will be documented in full once the backend is implemented.
+## 🔭 Future improvements
 
-| Method | Endpoint | Request | Response |
-| ------ | -------- | ------- | -------- |
-| GET | `/api/overview` | — | Dataset summary (row count, average/min/max price, top airlines/routes) |
-| GET | `/api/analysis` | — | Aggregated EDA results and key insights |
-| POST | `/api/predict` | Flight features (JSON) | Predicted price (JSON) |
+- Deploy the FastAPI backend and dashboard (e.g., Railway / Vercel).
+- Add live-demand features (day-of-week booking curves, competitor fares).
+- Forecasting and cheapest-booking-time analysis (Part 3 stretch goals).
+- Model monitoring and periodic retraining on fresh data.
 
-> **Status:** all endpoints are **planned** — none are live yet.
+## 🎓 Recruitment challenge context
 
-## Results
+Developed for the **MIC AIML Department Recruitment Challenge — Data Science &
+Visualization (AI Travel Analyst)** track:
 
-> Results will be updated after the data preprocessing, model training, and evaluation stages are completed.
+- **Part 1 — Exploration:** cleaning, 11 visualizations, price-factor analysis, insights. ✅
+- **Part 2 — Modeling:** feature engineering, model comparison, tuning, final model, evaluation. ✅
+- **Part 3 — Stretch (optional):** cheapest booking time, forecasting, recommendation — **not implemented**.
 
-| Model | MAE | RMSE | R² |
-| ----------------- | --: | ---: | -: |
-| Linear Regression |  —  |  —   | —  |
-| Decision Tree     |  —  |  —   | —  |
-| Random Forest     |  —  |  —   | —  |
+## 👤 Author
 
-No performance numbers are reported yet because no model has been trained.
+**Soumya** — 2nd-year CSE student.
 
-## Challenges
+- GitHub: [buildwithsoumya](https://github.com/buildwithsoumya)
 
-- **Data quality** — real-world flight-price data often contains missing values, inconsistent categories, and outliers that require careful handling.
-- **Price volatility** — flight prices depend on booking timing and demand, which are hard to capture fully in a static dataset.
-- **Feature design** — extracting useful time-based and route-based features is key to model quality.
-- **Model generalization** — a simple baseline may underfit; the ensemble approach should balance interpretability with performance.
-- **Integration** — wiring the trained model, FastAPI, and React dashboard into one smooth flow requires careful contract design (request/response schemas).
+## 📄 License
 
-## Future Improvements
-
-- **Part 3 stretch goals** (optional):
-  - Cheapest booking-time analysis.
-  - Flight-price forecasting over time.
-  - Flight recommendation system.
-- Hyperparameter tuning and cross-validation for the final model.
-- Additional model variants (e.g., gradient boosting) for comparison.
-- Deployment of the backend and dashboard to a public URL.
-- Screenshots and a short demo walkthrough in this README.
-
-
+No license file has been added yet.
