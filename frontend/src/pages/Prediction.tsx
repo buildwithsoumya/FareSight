@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { predictFare } from '../services/api'
+import { getRouteInfo, predictFare } from '../services/api'
 import type { PredictionRequest, PredictionResponse } from '../types'
 import {
   AIRLINES,
@@ -12,6 +12,12 @@ import {
   TRAVEL_CLASSES,
   WEEKDAYS,
 } from '../types'
+import {
+  formatMinutesToDuration,
+  minutesToTime,
+  parseDurationToMinutes,
+  timeToMinutes,
+} from '../utils/format'
 import SelectField from '../components/forms/SelectField'
 import NumberInput from '../components/forms/NumberInput'
 import TextInput from '../components/forms/TextInput'
@@ -123,11 +129,79 @@ export default function Prediction() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<PredictionResponse | null>(null)
+  const [durationHint, setDurationHint] = useState<string | null>(null)
+  const [distanceHint, setDistanceHint] = useState<string | null>(null)
+  const [arrivalHint, setArrivalHint] = useState<string | null>(null)
 
   const update = <K extends keyof FormState>(key: K, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }))
     setResult(null)
+    if (key === 'duration' || key === 'arrival_time') {
+      if (key === 'duration') setDurationHint(null)
+      setArrivalHint(null)
+    }
+    if (key === 'distance_km') setDistanceHint(null)
   }
+
+  // Auto-fill duration + distance from the dataset when the route or
+  // stop count changes (median values from GET /api/routes/info).
+  useEffect(() => {
+    if (form.source === form.destination) return
+    let cancelled = false
+
+    const fetchRoute = async () => {
+      try {
+        const info = await getRouteInfo(
+          form.source,
+          form.destination,
+          Number(form.total_stops),
+        )
+        if (cancelled) return
+        if (info.found && info.duration_minutes && info.distance_km) {
+          setForm((prev) => ({
+            ...prev,
+            duration: formatMinutesToDuration(info.duration_minutes!),
+            distance_km: String(info.distance_km),
+          }))
+          const basis =
+            info.sample_count === 1
+              ? '1 flight'
+              : `${info.sample_count} flights`
+          const scopeText = info.matched_exact_stops
+            ? ''
+            : ' · any stops'
+          setDurationHint(`Auto-filled · median of ${basis}${scopeText}`)
+          setDistanceHint(`Auto-filled · median of ${basis}${scopeText}`)
+        } else {
+          setDurationHint('No dataset data for this route')
+          setDistanceHint(null)
+        }
+      } catch {
+        // Route lookup is a convenience — silently ignore failures.
+      }
+    }
+
+    void fetchRoute()
+    return () => {
+      cancelled = true
+    }
+  }, [form.source, form.destination, form.total_stops])
+
+  // Auto-fill arrival time = departure time + duration.
+  useEffect(() => {
+    const depMinutes = timeToMinutes(form.departure_time)
+    const durationMinutes = parseDurationToMinutes(form.duration)
+    if (depMinutes === null || durationMinutes === null) return
+
+    const arrivalTotal = depMinutes + Math.round(durationMinutes)
+    const dayOffset = Math.floor(arrivalTotal / 1440)
+    setForm((prev) => ({ ...prev, arrival_time: minutesToTime(arrivalTotal) }))
+    setArrivalHint(
+      dayOffset > 0
+        ? `Auto-filled · departure + duration (+${dayOffset} day${dayOffset > 1 ? 's' : ''})`
+        : 'Auto-filled · departure + duration',
+    )
+  }, [form.departure_time, form.duration])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -250,7 +324,10 @@ export default function Prediction() {
                 onChange={(v) => update('duration', v)}
                 required
                 placeholder="e.g. 2h 15m"
-                hint='Formats: "2h 15m", "177 min", or decimal hours'
+                hint={
+                  durationHint ??
+                  'Formats: "2h 15m", "177 min", or decimal hours'
+                }
               />
               <TimeInput
                 id="pred-departure-time"
@@ -265,6 +342,7 @@ export default function Prediction() {
                 value={form.arrival_time}
                 onChange={(v) => update('arrival_time', v)}
                 required
+                hint={arrivalHint ?? undefined}
               />
 
               <NumberInput
@@ -276,6 +354,7 @@ export default function Prediction() {
                 max={25000}
                 required
                 suffix="km"
+                hint={distanceHint ?? undefined}
               />
               <NumberInput
                 id="pred-days"

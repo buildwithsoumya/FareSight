@@ -4,6 +4,7 @@ interface TimeInputProps {
   value: string
   onChange: (value: string) => void
   required?: boolean
+  hint?: string
 }
 
 export default function TimeInput({
@@ -12,6 +13,7 @@ export default function TimeInput({
   value,
   onChange,
   required = false,
+  hint,
 }: TimeInputProps) {
   const toInputValue = (v: string) => {
     const match = v.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i)
@@ -50,6 +52,7 @@ export default function TimeInput({
         onChange={(e) => onChange(fromInputValue(e.target.value))}
         className="field-input"
       />
+      {hint && <p className="text-xs text-slate-400">{hint}</p>}
     </div>
   )
 }

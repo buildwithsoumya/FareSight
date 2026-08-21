@@ -74,6 +74,14 @@ export interface FeatureImportanceItem {
   importance: number
 }
 
+export interface RouteInfo {
+  found: boolean
+  duration_minutes?: number
+  distance_km?: number
+  sample_count?: number
+  matched_exact_stops?: boolean
+}
+
 export interface ScatterPoint {
   x: number
   y: number

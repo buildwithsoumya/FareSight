@@ -9,6 +9,7 @@ interface NumberInputProps {
   required?: boolean
   suffix?: string
   placeholder?: string
+  hint?: string
 }
 
 export default function NumberInput({
@@ -22,6 +23,7 @@ export default function NumberInput({
   required = false,
   suffix,
   placeholder,
+  hint,
 }: NumberInputProps) {
   return (
     <div className="flex flex-col gap-1.5">
@@ -52,6 +54,7 @@ export default function NumberInput({
           </span>
         )}
       </div>
+      {hint && <p className="text-xs text-slate-400">{hint}</p>}
     </div>
   )
 }

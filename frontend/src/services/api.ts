@@ -29,6 +29,7 @@ import type {
   HealthResponse,
   PredictionRequest,
   PredictionResponse,
+  RouteInfo,
   ScatterResponse,
   SummaryData,
 } from '../types'
@@ -126,6 +127,19 @@ export async function getDaysBeforeDepartureAnalytics(): Promise<ScatterResponse
 export async function getFeatureImportance(): Promise<FeatureImportanceItem[]> {
   const { data } = await apiClient.get<FeatureImportanceItem[]>(
     '/api/analytics/feature-importance',
+  )
+  return data
+}
+
+export async function getRouteInfo(
+  source: string,
+  destination: string,
+  stops?: number,
+): Promise<RouteInfo> {
+  const params = new URLSearchParams({ source, destination })
+  if (stops !== undefined) params.set('stops', String(stops))
+  const { data } = await apiClient.get<RouteInfo>(
+    `/api/routes/info?${params.toString()}`,
   )
   return data
 }
