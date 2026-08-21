@@ -358,7 +358,7 @@ python -m venv .venv
 Windows activation:
 
 ```powershell
-.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 ```
 
 Then:

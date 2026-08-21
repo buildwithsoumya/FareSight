@@ -5,36 +5,50 @@ import SectionHeader from '../components/common/SectionHeader'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 import ErrorState from '../components/common/ErrorState'
 import FeatureImportanceChart from '../components/charts/FeatureImportanceChart'
+import BarChartWrapper from '../components/charts/BarChartWrapper'
+import Icon, { type IconName } from '../components/common/Icon'
 
-const MODEL_METRICS = [
+interface ModelEntry {
+  name: string
+  icon: IconName
+  mae: number
+  rmse: number
+  r2: number
+  selected: boolean
+}
+
+const MODELS: ModelEntry[] = [
   {
     name: 'Linear Regression',
+    icon: 'activity',
     mae: 23097.4,
     rmse: 45456.32,
     r2: 0.6238,
-    source: 'Baseline experiment',
+    selected: false,
   },
   {
     name: 'Random Forest',
+    icon: 'bar-chart',
     mae: 15394.65,
     rmse: 42214.69,
     r2: 0.6756,
-    source: 'Baseline experiment',
+    selected: false,
   },
   {
     name: 'HistGradientBoosting',
-    mae: 13998.13,
-    rmse: 40133.49,
-    r2: 0.7068,
-    source: 'Baseline experiment',
-  },
-  {
-    name: 'HistGradientBoosting (tuned)',
+    icon: 'cpu',
     mae: 13851.14,
     rmse: 40048.69,
     r2: 0.708,
-    source: 'Final selected model',
+    selected: true,
   },
+]
+
+const HYPERPARAMS = [
+  { label: 'learning_rate', value: '0.05' },
+  { label: 'max_iter', value: '400' },
+  { label: 'max_leaf_nodes', value: '63' },
+  { label: 'l2_regularization', value: '1.0' },
 ]
 
 const INSIGHTS = [
@@ -108,16 +122,56 @@ const CATEGORY_STYLES: Record<string, string> = {
 }
 
 function InsightCard({ insight }: { insight: (typeof INSIGHTS)[number] }) {
-  const style = CATEGORY_STYLES[insight.category] ?? CATEGORY_STYLES['Data insight']
+  const style =
+    CATEGORY_STYLES[insight.category] ?? CATEGORY_STYLES['Data insight']
   return (
-    <article className="card flex h-full flex-col p-5">
-      <span className={`mb-3 self-start rounded-full px-2.5 py-0.5 text-[11px] font-medium ${style}`}>
+    <article className="card card-hover flex h-full flex-col p-5">
+      <span
+        className={`mb-3 self-start rounded-full px-2.5 py-0.5 text-xs font-medium ${style}`}
+      >
         {insight.category}
       </span>
-      <h3 className="text-sm font-semibold text-slate-800">{insight.title}</h3>
-      <p className="mt-1.5 text-sm font-medium text-brand-700">{insight.summary}</p>
-      <p className="mt-2 text-sm leading-relaxed text-slate-600">{insight.detail}</p>
+      <h3 className="text-[15px] font-semibold leading-snug text-slate-900">
+        {insight.title}
+      </h3>
+      <p className="mt-1.5 text-sm font-medium text-brand-600">{insight.summary}</p>
+      <p className="mt-3 text-sm leading-relaxed text-slate-500">{insight.detail}</p>
     </article>
+  )
+}
+
+function MetricBar({
+  label,
+  value,
+  max,
+  selected,
+}: {
+  label: string
+  value: string
+  max: number
+  selected: boolean
+}) {
+  const numeric = parseFloat(value.replace(/[^0-9.]/g, ''))
+  const pct = Number.isFinite(numeric) ? Math.min((numeric / max) * 100, 100) : 0
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between">
+        <span className="text-xs font-medium text-slate-500">{label}</span>
+        <span
+          className={`text-sm font-semibold tabular-nums ${
+            selected ? 'text-brand-600' : 'text-slate-800'
+          }`}
+        >
+          {value}
+        </span>
+      </div>
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+        <div
+          className={`h-full rounded-full ${selected ? 'bg-brand-600' : 'bg-slate-300'}`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
   )
 }
 
@@ -129,77 +183,128 @@ export default function Insights() {
 
   return (
     <div className="space-y-8">
-      {/* Feature importance */}
-      <section>
+      <section className="space-y-5">
         <SectionHeader
-          title="What's driving fare estimates?"
-          description="Model feature importance from the trained model — Duration and Distance dominate."
+          title="Model Comparison"
+          description="Performance metrics across candidate predictive models, evaluated on the held-out test split."
         />
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <ChartCard
-            title="Model Feature Importance"
-            description="Relative importance, normalized to the top feature. Model interpretation — not causal analysis."
-            className="lg:col-span-2"
-          >
-            <FeatureImportanceChart data={data ?? []} />
-          </ChartCard>
 
-          <div className="space-y-4">
-            <div className="card p-5">
-              <h3 className="text-sm font-semibold text-slate-800">
-                Model comparison
-              </h3>
-              <p className="mt-0.5 text-xs text-slate-500">
-                Test-set metrics from the training experiments.
-              </p>
-              <div className="mt-4 overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead>
-                    <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
-                      <th className="pb-2 pr-3 font-medium">Model</th>
-                      <th className="pb-2 pr-3 font-medium">MAE</th>
-                      <th className="pb-2 pr-3 font-medium">RMSE</th>
-                      <th className="pb-2 font-medium">R²</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {MODEL_METRICS.map((m) => (
-                      <tr key={m.name}>
-                        <td className="py-2.5 pr-3 font-medium text-slate-800">
-                          {m.name}
-                        </td>
-                        <td className="py-2.5 pr-3 text-slate-600">
-                          ₹{Math.round(m.mae).toLocaleString('en-IN')}
-                        </td>
-                        <td className="py-2.5 pr-3 text-slate-600">
-                          ₹{Math.round(m.rmse).toLocaleString('en-IN')}
-                        </td>
-                        <td className="py-2.5 font-semibold text-slate-800">
-                          {m.r2.toFixed(3)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {MODELS.map((model) => (
+            <div
+              key={model.name}
+              className={`card card-hover relative flex flex-col gap-4 p-5 ${
+                model.selected ? 'border-brand-300 ring-1 ring-brand-200' : ''
+              }`}
+            >
+              {model.selected && (
+                <span className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-brand-600 px-2 py-0.5 text-[11px] font-semibold text-white">
+                  <Icon name="check" size={11} strokeWidth={3} />
+                  Selected
+                </span>
+              )}
+              <div className="flex items-center gap-2.5">
+                <span
+                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+                    model.selected
+                      ? 'bg-brand-50 text-brand-600'
+                      : 'bg-slate-100 text-slate-500'
+                  }`}
+                >
+                  <Icon name={model.icon} size={17} />
+                </span>
+                <h3 className="text-sm font-semibold text-slate-900">
+                  {model.name}
+                </h3>
+              </div>
+              <div className="space-y-3">
+                <MetricBar
+                  label="MAE"
+                  value={`₹${Math.round(model.mae).toLocaleString('en-IN')}`}
+                  max={23097.4}
+                  selected={model.selected}
+                />
+                <MetricBar
+                  label="RMSE"
+                  value={`₹${Math.round(model.rmse).toLocaleString('en-IN')}`}
+                  max={45456.32}
+                  selected={model.selected}
+                />
+                <MetricBar
+                  label="R² Score"
+                  value={model.r2.toFixed(3)}
+                  max={1}
+                  selected={model.selected}
+                />
               </div>
             </div>
+          ))}
+        </div>
+      </section>
 
-            <div className="card bg-brand-50 p-5">
-              <h3 className="text-sm font-semibold text-brand-900">
-                Key takeaway
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-brand-800">
-                Distance and duration carry more than half of the model's
-                predictive weight. Travel class and booking lead time come next.
-                Seasonal and channel effects are real but secondary.
+      <section className="card p-5 md:p-6">
+        <div className="flex flex-col gap-1 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
+          <h3 className="text-sm font-semibold text-slate-900">
+            Relative Performance Analysis
+          </h3>
+          <span className="text-xs text-slate-400">Test-set metrics</span>
+        </div>
+        <div className="grid grid-cols-1 gap-6 pt-5 lg:grid-cols-2">
+          <div className="flex flex-col justify-center gap-4">
+            <p className="text-sm leading-relaxed text-slate-600">
+              HistGradientBoosting demonstrates superior performance across all
+              primary metrics. The reduction in Mean Absolute Error (MAE) by{' '}
+              <strong className="font-semibold text-brand-600">~40%</strong>{' '}
+              compared to baseline Linear Regression indicates robust handling of
+              non-linear relationships and outlier resilience within the fare
+              dataset.
+            </p>
+            <div>
+              <p className="mb-2 flex items-center gap-1.5 text-[13px] font-semibold text-slate-700">
+                <Icon name="sliders" size={14} className="text-slate-400" />
+                Final hyperparameters
               </p>
+              <div className="flex flex-wrap gap-2">
+                {HYPERPARAMS.map((p) => (
+                  <span
+                    key={p.label}
+                    className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 font-mono text-xs text-slate-600"
+                  >
+                    {p.label} = {p.value}
+                  </span>
+                ))}
+              </div>
             </div>
+          </div>
+          <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-4">
+            <h4 className="mb-2 text-[13px] font-semibold uppercase tracking-wider text-slate-400">
+              R² Score Comparison
+            </h4>
+            <BarChartWrapper
+              data={MODELS.map((m) => ({ name: m.name, average_price: m.r2 }))}
+              height={180}
+              color="#8b5cf6"
+            />
           </div>
         </div>
       </section>
 
-      {/* Insight cards */}
-      <section>
+      <section className="space-y-5">
+        <SectionHeader
+          title="Feature Importance"
+          description="Relative importance from the trained model. Model interpretation — not causal analysis."
+        />
+        <ChartCard
+          title="Top Features by Importance"
+          icon="sparkles"
+          meta="Normalized to top feature"
+          heightClass="h-[360px]"
+        >
+          <FeatureImportanceChart data={data ?? []} height={330} />
+        </ChartCard>
+      </section>
+
+      <section className="space-y-5">
         <SectionHeader
           title="Findings"
           description="Key patterns established during exploratory analysis and modeling."

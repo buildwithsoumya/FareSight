@@ -1,3 +1,5 @@
+import Icon from '../common/Icon'
+
 interface SelectOption {
   value: string
   label: string
@@ -9,7 +11,6 @@ interface SelectFieldProps {
   value: string
   onChange: (value: string) => void
   options: SelectOption[]
-  placeholder?: string
 }
 
 export default function SelectField({
@@ -18,29 +19,29 @@ export default function SelectField({
   value,
   onChange,
   options,
-  placeholder = 'All',
 }: SelectFieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label
-        htmlFor={id}
-        className="text-xs font-medium text-slate-600"
-      >
+      <label htmlFor={id} className="field-label">
         {label}
       </label>
-      <select
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="h-9 rounded-lg border border-slate-300 bg-white px-2.5 text-sm text-slate-800 transition-colors focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-      >
-        <option value="all">{placeholder}</option>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      <div className="relative">
+        <select
+          id={id}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="field-input cursor-pointer appearance-none pr-9"
+        >
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+          <Icon name="chevron-down" size={16} />
+        </span>
+      </div>
     </div>
   )
 }

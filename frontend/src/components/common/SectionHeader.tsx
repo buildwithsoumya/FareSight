@@ -1,16 +1,18 @@
 interface SectionHeaderProps {
   title: string
-  description?: string
+  description?: React.ReactNode
   action?: React.ReactNode
 }
 
 export default function SectionHeader({ title, description, action }: SectionHeaderProps) {
   return (
-    <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h2 className="text-base font-semibold text-slate-800">{title}</h2>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">{title}</h1>
         {description && (
-          <p className="mt-0.5 text-sm text-slate-500">{description}</p>
+          <p className="mt-1 max-w-2xl text-sm leading-relaxed text-slate-500">
+            {description}
+          </p>
         )}
       </div>
       {action}

@@ -6,19 +6,23 @@ interface PageMeta {
 const PAGE_META: Record<string, PageMeta> = {
   '/dashboard': {
     title: 'Dashboard',
-    subtitle: 'High-level view of the flight-price dataset',
-  },
-  '/analytics': {
-    title: 'Analytics',
-    subtitle: 'Interactive exploration of the factors that drive flight prices',
+    subtitle: 'Operational overview of the FareSight dataset',
   },
   '/prediction': {
-    title: 'Price Prediction',
-    subtitle: 'Estimate a flight price from its characteristics',
+    title: 'Predict Fare',
+    subtitle: 'Estimate a fare from raw flight characteristics',
+  },
+  '/analytics': {
+    title: 'Fare Analytics',
+    subtitle: 'Explore historical pricing patterns in the FareSight dataset',
   },
   '/insights': {
-    title: 'Insights',
-    subtitle: 'Key findings from exploratory analysis and the ML model',
+    title: 'Model Insights',
+    subtitle: 'Performance metrics across candidate predictive models',
+  },
+  '/about': {
+    title: 'About FareSight',
+    subtitle: 'System architecture and machine-learning pipeline',
   },
 }
 

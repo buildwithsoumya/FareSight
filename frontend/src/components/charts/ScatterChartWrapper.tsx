@@ -9,12 +9,10 @@ import {
 } from 'recharts'
 import type { ScatterPoint } from '../../types'
 import { formatCompactINR, formatNumber } from '../../utils/format'
-
-// Local shape so the wrapper stays decoupled from the analytics API.
-type Point = ScatterPoint
+import { TOOLTIP_STYLE } from './BarChartWrapper'
 
 interface ScatterChartWrapperProps {
-  data: Point[]
+  data: ScatterPoint[]
   xLabel: string
   yLabel?: string
   xFormatter?: (value: number) => string
@@ -23,6 +21,9 @@ interface ScatterChartWrapperProps {
   color?: string
 }
 
+const AXIS_COLOR = '#94a3b8'
+const GRID_COLOR = '#e2e8f0'
+
 export default function ScatterChartWrapper({
   data,
   xLabel,
@@ -30,27 +31,27 @@ export default function ScatterChartWrapper({
   xFormatter = formatNumber,
   yFormatter = formatCompactINR,
   height = 260,
-  color = '#2c6da3',
+  color = '#6366f1',
 }: ScatterChartWrapperProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <ScatterChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+      <ScatterChart margin={{ top: 8, right: 8, bottom: 16, left: 8 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} />
         <XAxis
           type="number"
           dataKey="x"
           name={xLabel}
           tickFormatter={(v: number) => xFormatter(v)}
-          stroke="#94a3b8"
-          fontSize={11}
+          stroke={AXIS_COLOR}
+          fontSize={10}
           tickLine={false}
           axisLine={false}
           label={{
             value: xLabel,
             position: 'insideBottom',
-            offset: -2,
-            fontSize: 11,
-            fill: '#64748b',
+            offset: -6,
+            fontSize: 10,
+            fill: '#94a3b8',
           }}
         />
         <YAxis
@@ -58,30 +59,20 @@ export default function ScatterChartWrapper({
           dataKey="y"
           name={yLabel}
           tickFormatter={(v: number) => yFormatter(v)}
-          stroke="#94a3b8"
-          fontSize={11}
+          stroke={AXIS_COLOR}
+          fontSize={10}
           tickLine={false}
           axisLine={false}
         />
         <Tooltip
-          cursor={{ strokeDasharray: '3 3' }}
+          cursor={{ strokeDasharray: '3 3', stroke: '#94a3b8' }}
           formatter={(value: number | string, name: string) => {
             if (name === 'x') return [xFormatter(Number(value)), xLabel]
             return [yFormatter(Number(value)), yLabel]
           }}
-          contentStyle={{
-            borderRadius: 8,
-            border: '1px solid #e2e8f0',
-            fontSize: 12,
-          }}
+          contentStyle={TOOLTIP_STYLE}
         />
-        <Scatter
-          data={data}
-          fill={color}
-          fillOpacity={0.55}
-          stroke={color}
-          strokeWidth={0.5}
-        />
+        <Scatter data={data} fill={color} fillOpacity={0.45} stroke="none" />
       </ScatterChart>
     </ResponsiveContainer>
   )

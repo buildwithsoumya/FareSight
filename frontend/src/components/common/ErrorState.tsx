@@ -1,3 +1,5 @@
+import Icon from './Icon'
+
 interface ErrorStateProps {
   title?: string
   message?: string
@@ -10,18 +12,19 @@ export default function ErrorState({
   onRetry,
 }: ErrorStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
-      <span className="text-3xl" aria-hidden="true">
-        ⚠️
-      </span>
-      <p className="text-sm font-semibold text-slate-700">{title}</p>
-      <p className="max-w-sm text-sm text-slate-500">{message}</p>
+    <div className="card flex flex-col items-center justify-center gap-4 px-6 py-16 text-center">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500">
+        <Icon name="alert-circle" size={24} />
+      </div>
+      <div>
+        <p className="text-base font-semibold text-slate-900">{title}</p>
+        <p className="mx-auto mt-1 max-w-sm text-sm leading-relaxed text-slate-500">
+          {message}
+        </p>
+      </div>
       {onRetry && (
-        <button
-          type="button"
-          onClick={onRetry}
-          className="mt-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-        >
+        <button type="button" onClick={onRetry} className="btn-secondary mt-1">
+          <Icon name="refresh-cw" size={16} />
           Try again
         </button>
       )}

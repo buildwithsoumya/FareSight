@@ -9,9 +9,9 @@ export default function AppLayout() {
   const location = useLocation()
   const meta = getPageMeta(location.pathname)
 
-  // Close the mobile drawer on navigation.
   useEffect(() => {
     setSidebarOpen(false)
+    window.scrollTo(0, 0)
   }, [location.pathname])
 
   return (
@@ -23,11 +23,16 @@ export default function AppLayout() {
           subtitle={meta.subtitle}
           onMenuClick={() => setSidebarOpen(true)}
         />
-        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
+        <main className="flex-1 px-4 py-6 md:px-8 md:py-8">
+          <div className="animate-fade-in-up mx-auto w-full max-w-7xl">
             <Outlet />
           </div>
         </main>
+        <footer className="border-t border-slate-200 px-4 py-4 md:px-8">
+          <p className="mx-auto max-w-7xl text-xs text-slate-400">
+            FareSight — AI Travel Analyst · MIC AIML Department Recruitment Challenge
+          </p>
+        </footer>
       </div>
     </div>
   )

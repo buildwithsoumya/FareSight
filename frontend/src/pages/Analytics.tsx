@@ -12,6 +12,7 @@ import {
   getSummary,
 } from '../services/api'
 import ChartCard from '../components/cards/ChartCard'
+import SectionHeader from '../components/common/SectionHeader'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 import ErrorState from '../components/common/ErrorState'
 import EmptyState from '../components/common/EmptyState'
@@ -56,7 +57,7 @@ export default function Analytics() {
     daysBefore.error
 
   if (loading) return <LoadingSpinner label="Loading flight analytics..." />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState message={error} onRetry={() => window.location.reload()} />
 
   const hasData = Boolean(
     airlines.data?.length ||
@@ -82,78 +83,110 @@ export default function Analytics() {
 
   return (
     <div className="space-y-6">
-      <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-        Historical Dataset Analysis — averages computed from the FareSight
-        training dataset ({summary.data ? formatNumber(summary.data.rows) : '—'}{' '}
-        flights)
-      </p>
+      <SectionHeader
+        title="Fare Analytics"
+        description={
+          <>
+            Historical dataset analysis — averages computed from the FareSight
+            training dataset ({summary.data ? formatNumber(summary.data.rows) : '—'}{' '}
+            flights). Not live market data.
+          </>
+        }
+      />
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <ChartCard
-          title="Average Fare by Airline"
-          description="Mean fare per airline (historical data)"
-        >
-          <BarChartWrapper data={airlines.data ?? []} horizontal height={300} />
-        </ChartCard>
-
-        <div className="space-y-4">
-          <ChartCard title="Average Fare by Travel Class">
-            <BarChartWrapper data={classes.data ?? []} height={180} />
-          </ChartCard>
-          <ChartCard title="Average Fare by Stops">
-            <BarChartWrapper data={stops.data ?? []} height={180} />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <div className="lg:col-span-8">
+          <ChartCard
+            title="Average Fare by Airline"
+            icon="bar-chart"
+            meta="INR (₹)"
+            heightClass="h-[350px]"
+          >
+            <BarChartWrapper data={airlines.data ?? []} horizontal height={310} />
           </ChartCard>
         </div>
 
-        <ChartCard
-          title="Average Fare by Season"
-          description="Mean fare per season (historical data)"
-        >
-          <BarChartWrapper data={seasons.data ?? []} height={260} />
-        </ChartCard>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-4 lg:grid-cols-1">
+          <ChartCard title="Class Impact" icon="pie-chart" heightClass="h-[167px]">
+            <BarChartWrapper data={classes.data ?? []} height={142} />
+          </ChartCard>
+          <ChartCard title="Fare by Stops" icon="layers" heightClass="h-[167px]">
+            <BarChartWrapper data={stops.data ?? []} height={142} />
+          </ChartCard>
+        </div>
 
-        <ChartCard
-          title="Average Fare by Booking Channel"
-          description="Mean fare per channel (historical data)"
-        >
-          <BarChartWrapper data={channels.data ?? []} height={260} />
-        </ChartCard>
+        <div className="lg:col-span-6">
+          <ChartCard
+            title="Average Fare by Season"
+            icon="calendar"
+            meta="INR (₹)"
+            heightClass="h-[300px]"
+          >
+            <BarChartWrapper data={seasons.data ?? []} height={260} />
+          </ChartCard>
+        </div>
+        <div className="lg:col-span-6">
+          <ChartCard
+            title="Average Fare by Booking Channel"
+            icon="shopping-bag"
+            meta="INR (₹)"
+            heightClass="h-[300px]"
+          >
+            <BarChartWrapper data={channels.data ?? []} height={260} />
+          </ChartCard>
+        </div>
 
-        <ChartCard
-          title="Fare vs Duration"
-          description={`Historical relationship · Pearson correlation ${duration.data?.correlation ?? '—'}`}
-        >
-          <ScatterChartWrapper
-            data={toScatter(duration.data ?? { points: [], correlation: 0 }, 'duration_minutes')}
-            xLabel="Duration (minutes)"
-            xFormatter={(v) => formatHours(v)}
-          />
-        </ChartCard>
+        <div className="lg:col-span-6">
+          <ChartCard
+            title="Fare vs Flight Duration"
+            icon="clock"
+            meta={`Pearson r = ${duration.data?.correlation ?? '—'}`}
+            heightClass="h-[320px]"
+          >
+            <ScatterChartWrapper
+              data={toScatter(duration.data ?? { points: [], correlation: 0 }, 'duration_minutes')}
+              xLabel="Duration (minutes)"
+              xFormatter={(v) => formatHours(v)}
+              height={280}
+            />
+          </ChartCard>
+        </div>
+        <div className="lg:col-span-6">
+          <ChartCard
+            title="Trend: Days Before Departure"
+            icon="timer"
+            meta={`Pearson r = ${daysBefore.data?.correlation ?? '—'}`}
+            heightClass="h-[320px]"
+          >
+            <ScatterChartWrapper
+              data={toScatter(daysBefore.data ?? { points: [], correlation: 0 }, 'days_before_departure')}
+              xLabel="Days before departure"
+              height={280}
+            />
+          </ChartCard>
+        </div>
 
-        <ChartCard
-          title="Fare vs Days Before Departure"
-          description={`Booking lead time · Pearson correlation ${daysBefore.data?.correlation ?? '—'}`}
-        >
-          <ScatterChartWrapper
-            data={toScatter(daysBefore.data ?? { points: [], correlation: 0 }, 'days_before_departure')}
-            xLabel="Days before departure"
-          />
-        </ChartCard>
+        <div className="lg:col-span-6">
+          <ChartCard
+            title="Average Fare by Source"
+            icon="send"
+            meta="INR (₹)"
+            heightClass="h-[300px]"
+          >
+            <BarChartWrapper data={sources.data ?? []} height={260} />
+          </ChartCard>
+        </div>
 
-        <ChartCard
-          title="Average Fare by Source"
-          description="Mean fare per departure city (historical data)"
-        >
-          <BarChartWrapper data={sources.data ?? []} height={280} />
-        </ChartCard>
-
-        <ChartCard
-          title="Average Fare by Destination"
-          description="Mean fare per arrival city (historical data)"
-          className="lg:col-span-2"
-        >
-          <BarChartWrapper data={destinations.data ?? []} height={280} />
-        </ChartCard>
+        <div className="lg:col-span-6">
+          <ChartCard
+            title="Average Fare by Destination"
+            icon="map-pin"
+            meta="INR (₹)"
+            heightClass="h-[300px]"
+          >
+            <BarChartWrapper data={destinations.data ?? []} height={260} />
+          </ChartCard>
+        </div>
       </div>
     </div>
   )

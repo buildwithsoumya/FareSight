@@ -1,4 +1,6 @@
 import { useApiHealth } from '../../hooks/useApiHealth'
+import Icon from '../common/Icon'
+import { classNames } from '../../utils/cn'
 
 interface HeaderProps {
   title: string
@@ -9,63 +11,54 @@ interface HeaderProps {
 export default function Header({ title, subtitle, onMenuClick }: HeaderProps) {
   const apiOnline = useApiHealth()
 
-  return (
-    <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6 lg:px-8">
-      <button
-        type="button"
-        onClick={onMenuClick}
-        className="rounded-lg border border-slate-200 p-2 text-slate-600 transition-colors hover:bg-slate-50 lg:hidden"
-        aria-label="Open navigation menu"
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-          <line x1="4" y1="6" x2="20" y2="6" />
-          <line x1="4" y1="12" x2="20" y2="12" />
-          <line x1="4" y1="18" x2="20" y2="18" />
-        </svg>
-      </button>
+  const status =
+    apiOnline === null
+      ? { dot: 'bg-slate-300', text: 'text-slate-500', label: 'Checking API…' }
+      : apiOnline
+        ? { dot: 'bg-emerald-500', text: 'text-emerald-700', label: 'API Online' }
+        : { dot: 'bg-red-500', text: 'text-red-600', label: 'API Offline' }
 
-      <div className="min-w-0 flex-1">
-        <h1 className="truncate text-base font-semibold text-slate-900 sm:text-lg">
-          {title}
-        </h1>
-        {subtitle && (
-          <p className="hidden truncate text-xs text-slate-500 sm:block">{subtitle}</p>
-        )}
+  return (
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white/80 px-4 backdrop-blur md:px-8">
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={onMenuClick}
+          className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 lg:hidden"
+          aria-label="Open navigation menu"
+        >
+          <Icon name="menu" size={20} />
+        </button>
+        <div>
+          <h1 className="text-[15px] font-semibold leading-tight text-slate-900">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="hidden text-xs text-slate-500 sm:block">{subtitle}</p>
+          )}
+        </div>
       </div>
 
       <div
-        className={`flex items-center gap-2 rounded-full border px-3 py-1.5 ${
+        className={classNames(
+          'flex items-center gap-2 rounded-full border bg-white px-3 py-1.5 shadow-sm',
           apiOnline === null
-            ? 'border-slate-200 bg-slate-50'
+            ? 'border-slate-200'
             : apiOnline
-              ? 'border-emerald-200 bg-emerald-50'
-              : 'border-rose-200 bg-rose-50'
-        }`}
+              ? 'border-emerald-200'
+              : 'border-red-200',
+        )}
         role="status"
         aria-live="polite"
-        aria-label={apiOnline === null ? 'Checking API status' : apiOnline ? 'API online' : 'API offline'}
+        aria-label={status.label}
       >
-        <span className="relative flex h-2 w-2" aria-hidden="true">
-          {apiOnline === null ? (
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-slate-400" />
-          ) : apiOnline ? (
-            <>
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-            </>
-          ) : (
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-rose-500" />
+        <span className={classNames('h-2 w-2 rounded-full', status.dot)}>
+          {apiOnline === true && (
+            <span className="absolute h-2 w-2 animate-ping rounded-full bg-emerald-400" />
           )}
         </span>
-        <span className="hidden text-xs font-medium text-slate-700 sm:inline">
-          {apiOnline === null
-            ? 'Checking API…'
-            : apiOnline
-              ? 'API Online'
-              : 'API Offline'}
-        </span>
-        <span className="text-xs font-medium text-slate-700 sm:hidden">
-          {apiOnline === null ? '…' : apiOnline ? 'Online' : 'Offline'}
+        <span className={classNames('text-xs font-medium', status.text)}>
+          {status.label}
         </span>
       </div>
     </header>
