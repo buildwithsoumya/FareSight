@@ -30,7 +30,7 @@ export default function AppLayout() {
         </main>
         <footer className="border-t border-slate-200 px-4 py-4 md:px-8">
           <p className="mx-auto max-w-7xl text-xs text-slate-400">
-            FareSight — AI Travel Analyst · MIC AIML Department Recruitment Challenge
+            FareSight — AI Travel Analyst
           </p>
         </footer>
       </div>

@@ -24,8 +24,7 @@ The project answers one practical question:
 
 > **What drives flight fares, and can we predict them before booking?**
 
-Built for the **MIC AIML Department Recruitment Challenge** (Data Science &
-Visualization track), FareSight demonstrates the complete ML lifecycle —
+FareSight demonstrates the complete ML lifecycle —
 preprocessing, EDA, feature engineering, model comparison, hyperparameter
 tuning, model selection, a prediction REST API, and a production-style
 frontend.
@@ -425,12 +424,3 @@ Open <http://localhost:5173> (dashboard) and <http://localhost:8000/docs>
 - Add live-demand features (day-of-week booking curves, competitor fares).
 - Forecasting and cheapest-booking-time analysis (Part 3 stretch goals).
 - Model monitoring and periodic retraining on fresh data.
-
-## Recruitment challenge context
-
-Developed for the **MIC AIML Department Recruitment Challenge — Data Science &
-Visualization (AI Travel Analyst)** track:
-
-- **Part 1 — Exploration:** cleaning, 11 visualizations, price-factor analysis, insights. ✅
-- **Part 2 — Modeling:** feature engineering, model comparison, tuning, final model, evaluation. ✅
-- **Part 3 — Stretch (optional):** cheapest booking time, forecasting, recommendation — **not implemented**.

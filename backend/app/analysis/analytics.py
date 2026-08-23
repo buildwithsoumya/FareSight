@@ -161,6 +161,41 @@ def get_days_before_departure_relationship(sample: int = 300) -> dict:
     }
 
 
+def get_route_info(
+    source: str, destination: str, stops: float | None = None
+) -> dict:
+    """Median duration and distance for a route, optionally per stop count.
+
+    Used by the prediction form to auto-suggest flight duration and
+    distance. Falls back to the whole route (any stop count) when the
+    exact route+stops combination has no observations.
+    """
+    df = _load_dataset()
+    route_df = df[
+        (df["Source"].str.strip().str.lower() == source.strip().lower())
+        & (df["Destination"].str.strip().str.lower() == destination.strip().lower())
+    ]
+    matched_exact_stops = False
+    if stops is not None:
+        exact = route_df[route_df["Total_Stops"] == stops]
+        if len(exact) > 0:
+            route_df = exact
+            matched_exact_stops = True
+    route_df = route_df.dropna(subset=["Duration_Minutes", "Distance_km"])
+    if len(route_df) == 0:
+        return {"found": False}
+
+    duration = float(route_df["Duration_Minutes"].median())
+    distance = float(route_df["Distance_km"].median())
+    return {
+        "found": True,
+        "duration_minutes": int(round(duration / 5) * 5),
+        "distance_km": round(distance, 1),
+        "sample_count": int(len(route_df)),
+        "matched_exact_stops": matched_exact_stops,
+    }
+
+
 def get_feature_importance() -> list[dict]:
     """Model feature importance from the trained Random Forest pipeline.
 

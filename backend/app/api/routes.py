@@ -1,6 +1,6 @@
 """FastAPI route definitions for FareSight."""
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Query, status
 
 from app.schemas.prediction import (
     PredictionRequest,
@@ -176,6 +176,26 @@ async def analytics_duration():
 )
 async def analytics_days_before():
     return analytics.get_days_before_departure_relationship()
+
+
+@router.get(
+    "/routes/info",
+    tags=["Analytics"],
+    summary="Route duration and distance lookup",
+    description=(
+        "Median flight duration and distance for a source-destination "
+        "route, optionally filtered by stop count. Used by the prediction "
+        "form to auto-suggest values."
+    ),
+)
+async def route_info(
+    source: str = Query(..., min_length=1, description="Departure city"),
+    destination: str = Query(..., min_length=1, description="Arrival city"),
+    stops: float | None = Query(
+        None, ge=0, le=10, description="Number of stops (optional filter)"
+    ),
+):
+    return analytics.get_route_info(source, destination, stops)
 
 
 @router.get(
